@@ -1410,7 +1410,7 @@ import ply.yacc as yacc
 from Grapher.Tree import Tree
 from Models.Symbol import Symbol
 from Models.Symbol import EnumType
-
+from Translator.Header import Header
 parser = yacc.yacc()
 
 def getErrores():
@@ -1435,6 +1435,11 @@ def parse(inp):
         print('hay errores')
     retorno = imprimirErrores(errores)
     return cadenaConsola, '', retorno, ''
+
+def pruebaCodigo():
+    header = Header(25)
+    header.generarCodigo()
+    print(header.codigo)
 
 def imprimirErrores(errores):
     retorno = []

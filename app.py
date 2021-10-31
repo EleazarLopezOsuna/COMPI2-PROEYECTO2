@@ -1,6 +1,7 @@
+#python -m flask run --reload --debugger
 from flask import Flask, redirect, url_for, render_template, request
 from graphviz import dot
-from Analyzer.Grammar import parse
+from Analyzer.Grammar import parse, pruebaCodigo
 import graphviz
 
 app = Flask(__name__)
@@ -21,7 +22,8 @@ def analyze():
         tmp_val = str(tmp_val).replace('||', '!!!')
         tmp_val = str(tmp_val).replace('global ', '')
         tmp_val = str(tmp_val).replace('local ', '')
-        return redirect(url_for("output"))
+        result = pruebaCodigo()
+        return redirect(url_for("index"))
     else:
         return render_template('analyze.html', initial="")
 

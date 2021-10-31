@@ -1,53 +1,19 @@
 from enum import Enum
 
 class Symbol():
-    def __init__(self, type, absolutePosition, relativPosition, row, column, root):
+    def __init__(self, type, role, atributes, lower, upper, absolute, relative, size, reference, row, column, root):
         self.type = type
-        self.absolutePosition = absolutePosition
-        self.relativePosition = relativPosition
-        self.row = row
-        self.column = column
-        self.root = root
-        self.rol = 'Variable'
-        self.size = 1
-        self.heapPosition = -1
-        self.limiteInferior = -1
-        self.limiteSuperior = -1
-        self.parameterType = 0
-        self.content = -1
-        self.atributes = -1
-
-    def __init__(self, type, absolutePosition, relativePosition, row, column, root, size, content):
-        self.type = type
-        self.absolutePosition = absolutePosition
-        self.relativePosition = relativePosition
-        self.row = row
-        self.column = column
-        self.root = root
-        self.rol = 'Variable'
-        self.size = size
-        self.atributes = -1
-        self.heapPosition = -1
-        self.limiteInferior = -1
-        self.limiteSuperior = -1
-        self.parameterType = 0
-        self.content = content
-
-    def __init__(self, type, absolutePosition, relativePosition, row, column, root, size, atributes, heapPosition):
-        self.type = type
-        self.absolutePosition = absolutePosition
-        self.relativePosition = relativePosition
-        self.row = row
-        self.column = column
-        self.root = root
-        self.rol = 'Variable'
-        self.size = size
+        self.role = role
         self.atributes = atributes
-        self.heapPosition = heapPosition
-        self.limiteInferior = -1
-        self.limiteSuperior = -1
-        self.parameterType = 0
-        self.content = -1
+        self.lower = lower
+        self.upper = upper
+        self.absolute = absolute
+        self.relative = relative
+        self.size = size
+        self.reference = reference
+        self.row = row
+        self.column = column
+        self.root = root
 
 class EnumType(Enum):
     arreglo = 1
