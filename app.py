@@ -1,7 +1,7 @@
 #python -m flask run --reload --debugger
 from flask import Flask, redirect, url_for, render_template, request
 from graphviz import dot
-from Analyzer.Grammar import parse, pruebaCodigo
+from Analyzer.Grammar import parse
 import graphviz
 
 app = Flask(__name__)
@@ -10,7 +10,8 @@ app = Flask(__name__)
 def index():
     return render_template('index.html')
 
-headingsSimbolos = ("Environment", "Name", "Type", "Value", "Line", "Column")
+headingsSimbolos = ("Environment", "Name", "Type", "Role", "Lower", "Upper", "Absolute", "Relative", "Size", 
+    "Reference", "Row", "Column")
 headingsErrores = ("Type", "Error", "Line", "Column")
 
 @app.route("/analyze", methods=["POST","GET"])
@@ -22,8 +23,7 @@ def analyze():
         tmp_val = str(tmp_val).replace('||', '!!!')
         tmp_val = str(tmp_val).replace('global ', '')
         tmp_val = str(tmp_val).replace('local ', '')
-        result = pruebaCodigo()
-        return redirect(url_for("index"))
+        return redirect(url_for("output"))
     else:
         return render_template('analyze.html', initial="")
 
@@ -32,9 +32,6 @@ def output():
     global tmp_val
     result = parse(tmp_val)
     app.c = result[1]
-    # Eliminar las siguientes 2 lineas cuando ya se tenga todo
-    result[2] = () # Datos de simbolos o errores
-    result[3] = () # Codigo dot para copiar y pegar en un graficador online
     if request.method == "POST":
         return redirect(url_for("grafo"))
     else:

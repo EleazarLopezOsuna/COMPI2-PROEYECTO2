@@ -1410,7 +1410,9 @@ import ply.yacc as yacc
 from Grapher.Tree import Tree
 from Models.Symbol import Symbol
 from Models.Symbol import EnumType
+from Models.Environment import Environment
 from Translator.Header import Header
+from Translator.secondRead import secondRead
 parser = yacc.yacc()
 
 def getErrores():
@@ -1429,67 +1431,28 @@ def parse(inp):
     arbol =  Tree()
     root = parser.parse(inp)
     resultado = arbol.getDot(root)
-    retorno = []
-    cadenaConsola = ""
-    if len(errores) == 0:
-        print('hay errores')
-    retorno = imprimirErrores(errores)
-    return cadenaConsola, '', retorno, ''
-
-def pruebaCodigo():
     header = Header(25)
     header.generarCodigo()
-    print(header.codigo)
-
-def imprimirErrores(errores):
     retorno = []
-    for error in errores:
-        retorno.append([error.getTipo(), error.getError(), error.getFila(), error.getColumna()])
-    return retorno
+    cadenaConsola = header.codigo
+    second = secondRead(root, 3, header.environment)
+    second.generateCode(second.root)
+    second.code += '}'
+    cadenaConsola += second.code
+    if len(errores) == 0:
+        # "Environment", "Name", "Type", "Role", "Lower", "Upper", "Absolute", "Relative", "Size", 
+        # "Reference", "Row", "Column"
+        for environment in header.environmentList:
+            addItem(environment, retorno)
+    return cadenaConsola, resultado[1], retorno, resultado[0]
 
-def imprimirEntorno(entorno):
-    retorno = []
-    for key in entorno.tabla:
-        simbolo = entorno.tabla[key]
-        if simbolo.getTipo() == EnumType.error:
-            retorno.append([entorno.getNombre(), key, str(simbolo.getTipo()).replace('EnumTipo.', ''), str(simbolo.getValor().getError()), simbolo.getFila()], [simbolo.getColumna()])
-        elif simbolo.getTipo() == EnumType.mutable or simbolo.getTipo() == EnumType.nomutable:
-            cadena = "{" + concatAtributos(simbolo) + "}"
-            retorno.append([entorno.getNombre(), key, str(simbolo.getTipo()).replace('EnumTipo.', ''), cadena, simbolo.getFila(), simbolo.getColumna()])
-        elif simbolo.getTipo() == EnumType.arreglo:
-            cadena = "[" + concatItems(simbolo) + "]"
-            retorno.append([entorno.getNombre(), key, str(simbolo.getTipo()).replace('EnumTipo.', ''), cadena, simbolo.getFila(), simbolo.getColumna()])
-        elif simbolo.getTipo() == EnumType.funcion:
-            retorno.append([entorno.getNombre(), key, str(simbolo.getTipo()).replace('EnumTipo.', ''), ' ', simbolo.getFila(), simbolo.getColumna()])
-            nuevo = imprimirEntorno(simbolo.getValor().getEntorno())
-            for item in nuevo:
-                retorno.append(item)
-        else:
-            retorno.append([entorno.getNombre(), key, str(simbolo.getTipo()).replace('EnumTipo.', ''), str(simbolo.getValor()), simbolo.getFila(), simbolo.getColumna()])
-    return retorno
-
-def concatItems(simbolo):
-    retorno = ""
-    for sim in simbolo.getValor():
-        if sim.getTipo() == EnumType.arreglo:
-            cadena = "[" + concatItems(sim) + "]"
-            if len(retorno) == 0:
-                retorno = cadena
-            else:
-                retorno = retorno + ", " + cadena
-        else:
-            if len(retorno) == 0:
-                retorno = str(sim.getValor())
-            else:
-                retorno = retorno + ", " + str(sim.getValor())
-    return retorno
-
-def concatAtributos(simbolo):
-    retorno = ""
-    ent = simbolo.getValor()
-    for item in ent.tabla:
-        if len(retorno) == 0:
-                retorno = str(item)
-        else:
-            retorno = retorno + ", " + str(item)
-    return retorno
+def addItem(environment, retorno):
+    environment:Environment
+    variable:Symbol
+    for key in environment.tabla:
+        variable = environment.tabla[key]
+        retorno.append([variable.root, key, variable.type, variable.role, variable.lower, 
+        variable.upper, variable.absolute, variable.relative, variable.size, variable.reference, variable.row, variable.column])
+        if(variable.type == EnumType.funcion):
+            if(variable.atributes != None):
+                addItem(variable.atributes, retorno)
