@@ -208,19 +208,19 @@ class DefaultFunctions():
         self.intToString += '\tT2 = 1; //counter' + self.nuevaLinea
         self.intToString += '\tL0:' + self.nuevaLinea
         self.intToString += '\t\tif(T1 < 10) {goto L1;}' + self.nuevaLinea
-        self.intToString += '\t\tT3 = float64(int64(T1) % 10); //temp%10' + self.nuevaLinea
+        self.intToString += '\t\tT3 = math.Mod(T1, 10); //temp%10' + self.nuevaLinea
         self.intToString += '\t\tT1 = T1 - T3; //temp -= temp%10' + self.nuevaLinea
         self.intToString += '\t\tT1 = T1 / 10; //temp /= 10' + self.nuevaLinea
         self.intToString += '\t\tT2 = T2 * 10; //contador *= 10' + self.nuevaLinea
         self.intToString += '\t\tgoto L0;' + self.nuevaLinea
         self.intToString += '\tL1:' + self.nuevaLinea
         self.intToString += '\t\tT3 = T1 + 48; //Get ascii for number' + self.nuevaLinea
-        self.intToString += '\t\tHEAP[int(HP)] = T3' + self.nuevaLinea
-        self.intToString += '\t\tHP = HP + 1' + self.nuevaLinea
+        self.intToString += '\t\tHEAP[int(HP)] = T3;' + self.nuevaLinea
+        self.intToString += '\t\tHP = HP + 1;' + self.nuevaLinea
         self.intToString += '\t\tif(T0 > 9) {goto L2;}' + self.nuevaLinea
         self.intToString += '\t\tgoto L3;' + self.nuevaLinea
         self.intToString += '\tL2:' + self.nuevaLinea
-        self.intToString += '\t\tT1 = float64(int64(T0) % int64(T2)); //num %= contador' + self.nuevaLinea
+        self.intToString += '\t\tT1 = math.Mod(T0, T2); //num %= contador' + self.nuevaLinea
         self.intToString += '\t\tT0 = SP + 1; //Get number position' + self.nuevaLinea
         self.intToString += '\t\tSTACK[int(T0)] = T1;' + self.nuevaLinea
         self.intToString += '\t\tintToString();' + self.nuevaLinea

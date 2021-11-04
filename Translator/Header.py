@@ -43,6 +43,7 @@ class Header():
     def generarCodigo(self):
         self.codigo = 'package main' + self.nuevaLinea
         self.codigo += 'import ("fmt");' + self.nuevaLinea
+        self.codigo += 'import ("math");' + self.nuevaLinea
         self.codigo += 'var STACK[1000000] float64;' + self.nuevaLinea
         self.codigo += 'var HEAP[1000000] float64;' + self.nuevaLinea
         self.codigo += 'var SP, HP float64;' + self.nuevaLinea
