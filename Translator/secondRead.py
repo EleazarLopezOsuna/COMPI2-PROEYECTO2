@@ -3,6 +3,7 @@
 # generated in the first read, all the 3 address code generates in this file
 from Models.SintacticNode import SintacticNode
 from Models.Environment import Environment
+from Models.Symbol import EnumType, Symbol
 class secondRead():
 
     def __init__(self, root, maxTemp, environment):
@@ -10,6 +11,9 @@ class secondRead():
         self.maxTemp = maxTemp + 1
         self.maxTag = 0
         self.actualTemp = 0
+        self.relative = 18
+        self.absolute = 18
+        self.heap = 0
         self.code = 'func main(){\n'
         self.newLine = '\n'
         self.environment = environment
@@ -22,8 +26,30 @@ class secondRead():
             if(len(root.hijos) == 6):
                 # asignacion : IDENTIFICADOR IGUAL expresion DOBLEPUNTOS tipo (6)
                 if(root.getHijo(4).getHijo(0).nombre in ('INT64', 'FLOAT64', 'BOLEANO', 'CHAR', 'STRING')):
-                    # Se almacena en stack
+                    nombreVariable = root.getHijo(0).valor
+                    hijo = root.getHijo(4).getHijo(0)
+                    if hijo.nombre in ('CHAR', 'STRING'):
+                        self.environment.insertar(nombreVariable, Symbol(
+                            self.obtenerTipo(hijo.nombre), 'Variable', None, '', '', self.absolute, self.relative, 1, self.heap, hijo.linea, hijo.columna, 'main'
+                            ))
+                    else:
+                        self.environment.insertar(nombreVariable, Symbol(
+                            self.obtenerTipo(hijo.nombre), 'Variable', None, '', '', self.absolute, self.relative, 1, '', hijo.linea, hijo.columna, 'main'
+                            ))
                     temporalValor = self.resolverExpresion(root.getHijo(2))
+                    self.code += '\tSTACK[' + str(self.relative) + '] = T' + str(temporalValor) + '; //Stack position for variable: ' + nombreVariable + self.newLine
+
+    def obtenerTipo(self, nombre):
+        if nombre == 'INT64':
+            return EnumType.entero
+        if nombre == 'FLOAT64':
+            return EnumType.flotante
+        if nombre == 'BOLEANO':
+            return EnumType.boleano
+        if nombre == 'CHAR':
+            return EnumType.caracter
+        if nombre == 'STRING':
+            return EnumType.cadena
 
     def resolverExpresion(self, root:SintacticNode):
         if(root.nombre == 'EXPRESION'):
@@ -228,6 +254,7 @@ class secondRead():
             for letra in str(root.valor):
                 self.code += '\tHEAP[int(HP)] = ' + str(ord(letra)) + '; //Save character \'' + letra + '\' in heap' + self.newLine
                 self.code += '\tHP = HP + 1; //Increase heap' + self.newLine
+                self.heap += 1
             self.code += '\tHEAP[int(HP)] = 36; //Add end of string' + self.newLine
             self.code += '\tHP = HP + 1; //Increase heap' + self.newLine
             return (self.actualTemp - 1)
