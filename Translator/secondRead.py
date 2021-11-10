@@ -33,6 +33,44 @@ class secondRead():
                 print()
         elif(root.nombre == 'ASIGNACION'):
             self.ejecutarAsignacion(root)
+        elif(root.nombre == 'BLOQUEIF'):
+            self.ejecutarIf(root)
+
+    def ejecutarIf(self, root):
+        temporalValor = self.resolverExpresion(root.getHijo(1))
+        tipoExpresion = self.tipoDato
+        if(len(root.hijos) == 5):
+            # Es un if sin else y sin elseif
+            if(tipoExpresion == EnumType.boleano):
+                etiquetaFalsa = self.maxTag
+                self.maxTag += 1
+                self.code += '\tif T' + str(temporalValor) + ' == 0 {goto L' + str(etiquetaFalsa) + ';} // Condicion Falsa' + self.newLine
+                self.generateCode(root.getHijo(2))
+                self.code += '\tL' + str(etiquetaFalsa) + ': ' + self.newLine
+            else:
+                # Reportar error
+                print('')
+        elif(len(root.hijos) == 6):
+            if(root.getHijo(3).nombre == 'ELSEIF'):
+                # Es un if con elseif
+                print('')
+            elif(root.getHijo(3).nombre == 'ELSE'):
+                # Es un if con else y sin elseif
+                if(tipoExpresion == EnumType.boleano):
+                    etiquetaFalsa = self.maxTag
+                    self.maxTag += 1
+                    etiquetaSalida = self.maxTag
+                    self.maxTag += 1
+                    self.code += '\tif T' + str(temporalValor) + ' == 0 {goto L' + str(etiquetaFalsa) + ';} // Condicion verdadera' + self.newLine
+                    self.generateCode(root.getHijo(2))
+                    self.code += '\tgoto L' + str(etiquetaSalida) + '; // Salimos de la condicion verdadera' + self.newLine
+                    self.code += '\tL' + str(etiquetaFalsa) + ': ' + self.newLine
+                    self.generateCode(root.getHijo(3).getHijo(1))
+                    self.code += '\tL' + str(etiquetaSalida) + ': ' + self.newLine
+                else:
+                    # Reportar error
+                    print('')
+
             
     def ejecutarPrint(self, root):
         for hijo in root.getHijo(2).hijos:
@@ -125,6 +163,8 @@ class secondRead():
 
     def resolverExpresion(self, root:SintacticNode):
         if(root.nombre == 'EXPRESION'):
+            if(len(root.hijos) == 3 and root.getHijo(0).nombre == 'PARENTESISA'):
+                return self.resolverExpresion(root.getHijo(1))
             return self.resolverExpresion(root.getHijo(0))
         elif(root.nombre == 'SUMA'):
             operador1 = self.resolverExpresion(root.getHijo(0))

@@ -23,20 +23,41 @@
         variable2 = variable1;
 
     # Print y Println
-    variable1 = 2 ^ 6 :: Int64;
-    print("Probando", " declaracion");
-    print(" de ");
-    println("variables");
-    println("El valor de la variable1 es: ", variable1);
+        val1 = 1::Int64;
+        val2 = 10::Int64;
+        println("Probando declaracion de variables");
+        println(val1, " ", val2);
+        println("---------------------------------");
+        val1 = val1 + 41 + 82 - 10 + 0 * 2 ^ 2;
+        val2 = 11 * 1 - 33;
+        println("Probando asignación de variables y aritmeticas");
+        println(val1, " ", val2);
+        println("---------------------------------");
 
+    # If
+        variable1 = 2 ::Int64;
+        variable2 = 3 ::Int64;
+        if (variable1 > variable2) 
+            println("IF CORRECTO");
+        end;
 
-    val1 = 1::Int64;
-    val2 = 10::Int64;
-    println("Probando declaracion de variables");
-    println(val1, " ", val2);
-    println("---------------------------------");
-    val1 = val1 + 41 + 82 - 10 + 0 * 2 ^ 2;
-    val2 = 11 * 1 - 33;
-    println("Probando asignación de variables y aritmeticas");
-    println(val1, " ", val2);
-    println("---------------------------------");
+        variable1 = 2 ::Int64;
+        variable2 = 3 ::Int64;
+        if (variable1 > variable2) 
+            println("variable1 es mayor a variable2");
+        else
+            println("variable1 es menor a variable2");
+        end;
+
+        variable1 = 4 ::Int64;
+        if (variable1 == 1) 
+            println("variable1 es 1");
+        elseif (variable1 == 2)
+            println("variable1 es 1");
+        elseif (variable1 == 3)
+            println("variable1 es 1");
+        elseif (variable1 == 4)
+            println("variable1 es 1");
+        else
+            println("variable1 es otro");
+        end;
