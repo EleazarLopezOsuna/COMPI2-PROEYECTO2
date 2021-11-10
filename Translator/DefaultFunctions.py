@@ -183,22 +183,22 @@ class DefaultFunctions():
         self.stringTimes += '}' + self.nuevaLinea
 
     def GenerateNumberPower(self):
-        self.stringTimes = 'func numberPower(){' + self.nuevaLinea
-        self.stringTimes += '\tT0 = SP + 1; //Get base index' + self.nuevaLinea
-        self.stringTimes += '\tT0 = STACK[int(T0)]; //Get base value' + self.nuevaLinea
-        self.stringTimes += '\tT1 = SP + 2; //Get exponent index' + self.nuevaLinea
-        self.stringTimes += '\tT1 = STACK[int(T1)]; //Get exponent value' + self.nuevaLinea
-        self.stringTimes += '\tT2 = 1; //Set initial value' + self.nuevaLinea
-        self.stringTimes += '\tL0: //Loop tag' + self.nuevaLinea
-        self.stringTimes += '\t\tif(T1 < 1) {goto L1;} //Completed' + self.nuevaLinea
-        self.stringTimes += '\t\tT2 = T2 * T0; //Previous value * Base' + self.nuevaLinea
-        self.stringTimes += '\t\tT1 = T1 - 1; //Base - 1' + self.nuevaLinea
-        self.stringTimes += '\t\tgoto L0; //Go back to loop' + self.nuevaLinea
-        self.stringTimes += '\tL1: //Exit tag' + self.nuevaLinea
-        self.stringTimes += '\t\tT0 = SP + 0; //Set return index' + self.nuevaLinea
-        self.stringTimes += '\t\tSTACK[int(T0)] = T2; //Set return value' + self.nuevaLinea
-        self.stringTimes += '\t\treturn; //Exit function' + self.nuevaLinea
-        self.stringTimes += '}' + self.nuevaLinea
+        self.numberPower = 'func numberPower(){' + self.nuevaLinea
+        self.numberPower += '\tT0 = SP + 1; //Get base index' + self.nuevaLinea
+        self.numberPower += '\tT0 = STACK[int(T0)]; //Get base value' + self.nuevaLinea
+        self.numberPower += '\tT1 = SP + 2; //Get exponent index' + self.nuevaLinea
+        self.numberPower += '\tT1 = STACK[int(T1)]; //Get exponent value' + self.nuevaLinea
+        self.numberPower += '\tT2 = 1; //Set initial value' + self.nuevaLinea
+        self.numberPower += '\tL0: //Loop tag' + self.nuevaLinea
+        self.numberPower += '\t\tif(T1 < 1) {goto L1;} //Completed' + self.nuevaLinea
+        self.numberPower += '\t\tT2 = T2 * T0; //Previous value * Base' + self.nuevaLinea
+        self.numberPower += '\t\tT1 = T1 - 1; //Base - 1' + self.nuevaLinea
+        self.numberPower += '\t\tgoto L0; //Go back to loop' + self.nuevaLinea
+        self.numberPower += '\tL1: //Exit tag' + self.nuevaLinea
+        self.numberPower += '\t\tT0 = SP + 0; //Set return index' + self.nuevaLinea
+        self.numberPower += '\t\tSTACK[int(T0)] = T2; //Set return value' + self.nuevaLinea
+        self.numberPower += '\t\treturn; //Exit function' + self.nuevaLinea
+        self.numberPower += '}' + self.nuevaLinea
 
     def GenerateIntToString(self):
         self.intToString = 'func intToString(){' + self.nuevaLinea
