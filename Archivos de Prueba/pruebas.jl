@@ -53,11 +53,11 @@
         if (variable1 == 1) 
             println("variable1 es 1");
         elseif (variable1 == 2)
-            println("variable1 es 1");
+            println("variable1 es 2");
         elseif (variable1 == 3)
-            println("variable1 es 1");
+            println("variable1 es 3");
         elseif (variable1 == 4)
-            println("variable1 es 1");
+            println("variable1 es 4");
         else
             println("variable1 es otro");
         end;

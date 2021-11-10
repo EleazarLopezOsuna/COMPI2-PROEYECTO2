@@ -53,7 +53,17 @@ class secondRead():
         elif(len(root.hijos) == 6):
             if(root.getHijo(3).nombre == 'ELSEIF'):
                 # Es un if con elseif
-                print('')
+                if(tipoExpresion == EnumType.boleano):
+                    self.etiquetaSalida = self.maxTag
+                    self.maxTag += 1
+                    etiquetaFalsa = self.maxTag
+                    self.maxTag += 1
+                    self.code += '\tif T' + str(temporalValor) + ' == 0 {goto L' + str(etiquetaFalsa) + ';} // Condicion Falsa' + self.newLine
+                    self.generateCode(root.getHijo(2))
+                    self.code += '\tgoto L' + str(self.etiquetaSalida) + '; //Exit tag' + self.newLine
+                    self.code += '\tL' + str(etiquetaFalsa) + ': ' + self.newLine
+                    self.ejecutarElseIf(root.getHijo(3))
+                    self.code += '\tL' + str(self.etiquetaSalida) + ': ' + self.newLine
             elif(root.getHijo(3).nombre == 'ELSE'):
                 # Es un if con else y sin elseif
                 if(tipoExpresion == EnumType.boleano):
@@ -71,6 +81,25 @@ class secondRead():
                     # Reportar error
                     print('')
 
+    def ejecutarElseIf(self, root):
+        if(root.valor == 'ELSEIF'):
+            print(root.nombre)
+            temporalValor = self.resolverExpresion(root.getHijo(1))
+            tipoExpresion = self.tipoDato
+            if(tipoExpresion == EnumType.boleano):
+                etiquetaFalsa = self.maxTag
+                self.maxTag += 1
+                self.code += '\tif T' + str(temporalValor) + ' == 0 {goto L' + str(etiquetaFalsa) + ';} // Condicion Falsa' + self.newLine
+                self.generateCode(root.getHijo(2))
+                self.code += '\tgoto L' + str(self.etiquetaSalida) + '; //Exit tag' + self.newLine
+                self.code += '\tL' + str(etiquetaFalsa) + ': ' + self.newLine
+            else:
+                # Reportar error
+                print('')
+        elif(root.valor == 'ELSE'):
+            self.generateCode(root.getHijo(1))
+        for hijo in root.hijos:
+            self.ejecutarElseIf(hijo)
             
     def ejecutarPrint(self, root):
         for hijo in root.getHijo(2).hijos:
