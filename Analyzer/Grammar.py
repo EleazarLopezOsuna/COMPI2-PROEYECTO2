@@ -1432,12 +1432,13 @@ def parse(inp):
     root = parser.parse(inp)
     resultado = arbol.getDot(root)
     header = Header(25)
-    header.generarCodigo()
     retorno = []
-    cadenaConsola = header.codigo
-    second = secondRead(root, 3, header.environment)
+    second = secondRead(root, 4, header.environment)
     second.generateCode(second.root)
     second.code += '}'
+    header.numeroTemporales = second.actualTemp
+    header.generarCodigo()
+    cadenaConsola = header.codigo
     cadenaConsola += second.code
     if len(errores) == 0:
         # "Environment", "Name", "Type", "Role", "Lower", "Upper", "Absolute", "Relative", "Size", 

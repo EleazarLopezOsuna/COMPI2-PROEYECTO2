@@ -170,10 +170,10 @@ class DefaultFunctions():
         self.stringTimes += '\t\t\tT0 = T0 + 1; //T0 increses' + self.nuevaLinea
         self.stringTimes += '\t\t\tgoto L1; //Go back to string loop' + self.nuevaLinea
         self.stringTimes += '\t\tL2:' + self.nuevaLinea
-        self.stringTimes += '\t\t\tT1 = T1 - 1' + self.nuevaLinea
+        self.stringTimes += '\t\t\tT1 = T1 - 1;' + self.nuevaLinea
         self.stringTimes += '\t\t\tT0 = SP + 1; //Get the position of fist string in stack' + self.nuevaLinea
         self.stringTimes += '\t\t\tT0 = STACK[int(T0)]; //Get the heap position of first string' + self.nuevaLinea
-        self.stringTimes += '\t\t\tgoto L0' + self.nuevaLinea
+        self.stringTimes += '\t\t\tgoto L0;' + self.nuevaLinea
         self.stringTimes += '\tL3: //Exit tag' + self.nuevaLinea
         self.stringTimes += '\t\tHEAP[int(HP)] = 36; //Add end of string to heap' + self.nuevaLinea
         self.stringTimes += '\t\tHP = HP + 1; //Heap increses' + self.nuevaLinea
@@ -225,5 +225,7 @@ class DefaultFunctions():
         self.intToString += '\t\tSTACK[int(T0)] = T1;' + self.nuevaLinea
         self.intToString += '\t\tintToString();' + self.nuevaLinea
         self.intToString += '\tL3:' + self.nuevaLinea
+        self.intToString += '\t\tHEAP[int(HP)] = 36; //Set end of string' + self.nuevaLinea
+        self.intToString += '\t\tHP = HP + 1; //Increase HP' + self.nuevaLinea
         self.intToString += '\t\treturn;' + self.nuevaLinea
         self.intToString += '}' + self.nuevaLinea

@@ -11,7 +11,7 @@ class secondRead():
         self.root = root
         self.maxTemp = maxTemp + 1
         self.maxTag = 0
-        self.actualTemp = 0
+        self.actualTemp = maxTemp
         self.relative = 18
         self.absolute = 18
         self.heap = 0
@@ -23,34 +23,93 @@ class secondRead():
         if(root.nombre == 'INICIO' or root.nombre == 'INSTRUCCION'):
             for hijo in root.hijos:
                 self.generateCode(hijo)
+        elif(root.nombre == 'LLAMADAFUNCION'):
+            if(root.getHijo(0).nombre == 'PRINT'):
+                self.ejecutarPrint(root)
+            elif(root.getHijo(0).nombre == 'PRINTLN'):
+                self.ejecutarPrint(root)
+                self.code += '\tfmt.Printf("%' + 'c", 10); //New line' + self.newLine
+            else:
+                print()
         elif(root.nombre == 'ASIGNACION'):
-            if(len(root.hijos) == 6):
-                # asignacion : IDENTIFICADOR IGUAL expresion DOBLEPUNTOS tipo (6)
-                if(root.getHijo(4).getHijo(0).nombre in ('INT64', 'FLOAT64', 'BOLEANO', 'CHAR', 'STRING')):
-                    nombreVariable = root.getHijo(0).valor
-                    hijo = root.getHijo(4).getHijo(0)
-                    resultado = self.environment.buscar(nombreVariable)
-                    if(resultado == None):
-                        # La variable no existe, debemos crear una
-                        if hijo.nombre in ('CHAR', 'STRING'):
-                            self.environment.insertar(nombreVariable, Symbol(
-                                self.obtenerTipo(hijo.nombre), 'Variable', None, '', '', self.absolute, self.relative, 1, self.heap, hijo.linea, hijo.columna, 'main'
-                                ))
-                        else:
-                            self.environment.insertar(nombreVariable, Symbol(
-                                self.obtenerTipo(hijo.nombre), 'Variable', None, '', '', self.absolute, self.relative, 1, '', hijo.linea, hijo.columna, 'main'
-                             ))
-                        temporalValor = self.resolverExpresion(root.getHijo(2))
-                        self.code += '\tT' + str(self.actualTemp) + ' = SP + ' + str(self.relative) + '; //Get variable relative position' + self.newLine
-                        self.code += '\tSTACK[int(T' + str(self.actualTemp) + ')] = T' + str(temporalValor) + '; //Stack position for variable: ' + nombreVariable + self.newLine
-                        self.actualTemp += 1
-                        self.relative += 1
+            self.ejecutarAsignacion(root)
+            
+    def ejecutarPrint(self, root):
+        for hijo in root.getHijo(2).hijos:
+            if(hijo.nombre == 'EXPRESION'):
+                temporalValor = self.resolverExpresion(hijo)
+                tipoExpresion = self.tipoDato
+                if(tipoExpresion == EnumType.cadena or tipoExpresion == EnumType.caracter):
+                    self.code += '\tT' + str(self.actualTemp) + ' = SP; //Save environment' + self.newLine
+                    self.code += '\tSP = 3; //Change environment' + self.newLine
+                    self.code += '\tSTACK[int(SP)] = T' + str(temporalValor) + '; //Give start value to the function' + self.newLine
+                    self.code += '\tstringPrint(); //Call function' + self.newLine
+                    self.code += '\tSP = T' + str(self.actualTemp) + '; //Set back the previous environment' + self.newLine
+                    self.actualTemp += 1
+                elif(tipoExpresion == EnumType.entero or tipoExpresion == EnumType.boleano):
+                    self.code += '\tT' + str(self.actualTemp) + ' = SP; //Save environment' + self.newLine
+                    entornoActual = self.actualTemp
+                    self.actualTemp += 1
+                    self.code += '\tT' + str(self.actualTemp) + ' = HP; //Save environment' + self.newLine
+                    hpActual = self.actualTemp
+                    self.actualTemp += 1
+                    self.code += '\tif(T' + str(temporalValor) + ' > 0) {goto L' + str(self.maxTag) + ';} // Number is positive' + self.newLine
+                    self.code += '\tHEAP[int(HP)] = 45; //Add negative symbol to string' + self.newLine
+                    self.code += '\tHP = HP + 1; //Increase HP' + self.newLine
+                    self.code += '\tT' + str(temporalValor) + ' = -T' + str(temporalValor) + '; //Set number as positive' + self.newLine
+                    self.code += '\tL' + str(self.maxTag) + ': ' + self.newLine
+                    self.maxTag += 1
+                    self.code += '\t\tSP = 14; //Change environment to intToString function' + self.newLine
+                    self.code += '\t\tT' + str(self.actualTemp) + ' = SP + 1; //Stack position for number' + self.newLine
+                    self.code += '\t\tSTACK[int(T' + str(self.actualTemp) + ')] = T' + str(temporalValor) + '; //Set number value in stack' + self.newLine
+                    self.code += '\t\tintToString(); //Call function' + self.newLine
+                    self.code += '\t\tT' + str(self.actualTemp) + ' = STACK[int(SP)]; //Get return value' + self.newLine
+                    self.code += '\t\tSP = 3; //Change environment to stringPrint function' + self.newLine
+                    self.code += '\t\tSTACK[int(SP)] = T' + str(hpActual) + '; //Give start value to the function' + self.newLine
+                    self.code += '\t\tstringPrint(); //Call function' + self.newLine
+                    self.code += '\t\tSP = T' + str(entornoActual) + '; //Set back the previous environment' + self.newLine
+
+    def ejecutarAsignacion(self, root):
+        if(len(root.hijos) == 6):
+            # asignacion : IDENTIFICADOR IGUAL expresion DOBLEPUNTOS tipo (6)
+            if(root.getHijo(4).getHijo(0).nombre in ('INT64', 'FLOAT64', 'BOLEANO', 'CHAR', 'STRING')):
+                nombreVariable = root.getHijo(0).valor
+                hijo = root.getHijo(4).getHijo(0)
+                resultado = self.environment.buscar(nombreVariable)
+                if(resultado == None):
+                    # La variable no existe, debemos crear una
+                    if hijo.nombre in ('CHAR', 'STRING'):
+                        self.environment.insertar(nombreVariable, Symbol(
+                            self.obtenerTipo(hijo.nombre), 'Variable', None, '', '', self.absolute, self.relative, 1, self.heap, hijo.linea, hijo.columna, 'main'
+                            ))
                     else:
-                        # La variable si existe debemos modificarla
-                        temporalValor = self.resolverExpresion(root.getHijo(2))
-                        self.code += '\tT' + str(self.actualTemp) + ' = SP + ' + str(resultado.relative) + '; //Get variable relative positivon' + self.newLine
-                        self.code += '\tSTACK[int(T' + str(self.actualTemp) + ')] = T' + str(temporalValor) + '; //Stack position for variable: ' + nombreVariable + self.newLine
-                        self.actualTemp += 1
+                        self.environment.insertar(nombreVariable, Symbol(
+                            self.obtenerTipo(hijo.nombre), 'Variable', None, '', '', self.absolute, self.relative, 1, '', hijo.linea, hijo.columna, 'main'
+                         ))
+                    temporalValor = self.resolverExpresion(root.getHijo(2))
+                    self.code += '\tT' + str(self.actualTemp) + ' = SP + ' + str(self.relative) + '; //Get variable relative position' + self.newLine
+                    self.code += '\tSTACK[int(T' + str(self.actualTemp) + ')] = T' + str(temporalValor) + '; //Stack position for variable: ' + nombreVariable + self.newLine
+                    self.actualTemp += 1
+                    self.relative += 1
+                else:
+                    # La variable si existe debemos modificarla
+                    temporalValor = self.resolverExpresion(root.getHijo(2))
+                    self.code += '\tT' + str(self.actualTemp) + ' = SP + ' + str(resultado.relative) + '; //Get variable relative positivon' + self.newLine
+                    self.code += '\tSTACK[int(T' + str(self.actualTemp) + ')] = T' + str(temporalValor) + '; //Stack position for variable: ' + nombreVariable + self.newLine
+                    self.actualTemp += 1
+        elif(len(root.hijos) == 4 and root.getHijo(1).nombre == 'IGUAL'):
+            # asignacion : IDENTIFICADOR IGUAL expresion (4)
+            nombreVariable = root.getHijo(0).valor
+            resultado = self.environment.buscar(nombreVariable)
+            if(resultado == None):
+                # Reportar error, la variable no existe. Para crearla se debe de indicar un tipo
+                print('')
+            else:
+                # La variable si existe debemos modificarla
+                temporalValor = self.resolverExpresion(root.getHijo(2))
+                self.code += '\tT' + str(self.actualTemp) + ' = SP + ' + str(resultado.relative) + '; //Get variable relative positivon' + self.newLine
+                self.code += '\tSTACK[int(T' + str(self.actualTemp) + ')] = T' + str(temporalValor) + '; //Stack position for variable: ' + nombreVariable + self.newLine
+                self.actualTemp += 1
 
     def obtenerTipo(self, nombre):
         if nombre == 'INT64':
