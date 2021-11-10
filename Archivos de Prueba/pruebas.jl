@@ -6,7 +6,8 @@
         variable2 = variable1 :: Int64;
         varriable3 = 23.34 :: Float64;
         variable4 = false || true :: Bool;
-        variable5 = "Hola" ^ 3 :: String;
+        variable5 = lowercase("HHOLA") :: String;
+        variable6 = uppercase(variable5) :: String;
 
     # asignacion : IDENTIFICADOR accesoFS IGUAL expresion (5)
 

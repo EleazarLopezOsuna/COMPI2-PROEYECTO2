@@ -69,22 +69,57 @@ class secondRead():
             return self.resolverExpresion(root.getHijo(0))
         elif(root.nombre == 'SUMA'):
             operador1 = self.resolverExpresion(root.getHijo(0))
+            tipoOperador1 = self.tipoDato
             operador2 = self.resolverExpresion(root.getHijo(2))
-            self.code += '\tT' + str(self.actualTemp) + ' = T' + str(operador1) + ' + ' + 'T' + str(operador2) + ';' + self.newLine
-            self.actualTemp += 1
-            return (self.actualTemp - 1) # Retorno el numero del temporal en el que se almaceno el resultado
+            tipoOperador2 = self.tipoDato
+            if((tipoOperador1 == EnumType.entero in (EnumType.entero, EnumType.flotante)) and (tipoOperador2 == EnumType.entero in (EnumType.entero, EnumType.flotante))):
+                self.code += '\tT' + str(self.actualTemp) + ' = T' + str(operador1) + ' + ' + 'T' + str(operador2) + ';' + self.newLine
+                self.actualTemp += 1
+                if(tipoOperador1 == EnumType.flotante or tipoOperador2 == EnumType.flotante):
+                    self.tipoDato = EnumType.flotante
+                else:
+                    self.tipoDato = EnumType.entero
+                return (self.actualTemp - 1)
+            else:
+                # Reportar error
+                self.tipoDato = EnumType.error
+                return 0
         elif(root.nombre == 'RESTA'):
             operador1 = self.resolverExpresion(root.getHijo(0))
+            tipoOperador1 = self.tipoDato
             operador2 = self.resolverExpresion(root.getHijo(2))
-            self.code += '\tT' + str(self.actualTemp) + ' = T' + str(operador1) + ' - ' + 'T' + str(operador2) + ';' + self.newLine
-            self.actualTemp += 1
-            return (self.actualTemp - 1) # Retorno el numero del temporal en el que se almaceno el resultado
+            tipoOperador2 = self.tipoDato
+            if((tipoOperador1 == EnumType.entero in (EnumType.entero, EnumType.flotante)) and (tipoOperador2 == EnumType.entero in (EnumType.entero, EnumType.flotante))):
+                self.code += '\tT' + str(self.actualTemp) + ' = T' + str(operador1) + ' - ' + 'T' + str(operador2) + ';' + self.newLine
+                self.actualTemp += 1
+                if(tipoOperador1 == EnumType.flotante or tipoOperador2 == EnumType.flotante):
+                    self.tipoDato = EnumType.flotante
+                else:
+                    self.tipoDato = EnumType.entero
+                return (self.actualTemp - 1)
+            else:
+                # Reportar error
+                self.tipoDato = EnumType.error
+                return 0
         elif(root.nombre == 'MULTIPLICACION'):
             operador1 = self.resolverExpresion(root.getHijo(0))
+            tipoOperador1 = self.tipoDato
             operador2 = self.resolverExpresion(root.getHijo(2))
-            self.code += '\tT' + str(self.actualTemp) + ' = T' + str(operador1) + ' * ' + 'T' + str(operador2) + ';' + self.newLine
-            self.actualTemp += 1
-            return (self.actualTemp - 1) # Retorno el numero del temporal en el que se almaceno el resultado
+            tipoOperador2 = self.tipoDato
+            if((tipoOperador1 == EnumType.entero in (EnumType.entero, EnumType.flotante)) and (tipoOperador2 == EnumType.entero in (EnumType.entero, EnumType.flotante))):
+                self.code += '\tT' + str(self.actualTemp) + ' = T' + str(operador1) + ' * ' + 'T' + str(operador2) + ';' + self.newLine
+                self.actualTemp += 1
+                if(tipoOperador1 == EnumType.flotante or tipoOperador2 == EnumType.flotante):
+                    self.tipoDato = EnumType.flotante
+                else:
+                    self.tipoDato = EnumType.entero
+                return (self.actualTemp - 1)
+            elif(tipoOperador1 == EnumType.cadena and tipoOperador2 == EnumType.cadena):
+                return (self.actualTemp - 1)
+            else:
+                # Reportar error
+                self.tipoDato = EnumType.error
+                return 0
         elif(root.nombre == 'DIVISION'):
             operador1 = self.resolverExpresion(root.getHijo(0))
             operador2 = self.resolverExpresion(root.getHijo(2))
@@ -97,6 +132,7 @@ class secondRead():
             self.code += '\t\tDivisionBy0() // Call error message' + self.newLine
             self.code += '\tL' + str(self.maxTag) + ':' + self.newLine
             self.actualTemp += 1
+            self.tipoDato = EnumType.flotante
             return (self.actualTemp - 1) # Retorno el numero del temporal en el que se almaceno el resultado
         elif(root.nombre == 'IGUALDAD'):
             self.code += '//Start -> Area of operation EQUAL' + self.newLine
@@ -114,7 +150,8 @@ class secondRead():
             self.code += '\tL' + str(etiquetaSalida) + ': //Exit tag' + self.newLine
             self.code += '//End -> Area of operation EQUAL' + self.newLine
             self.actualTemp += 1
-            return (self.actualTemp - 1) # Retorno el numero del temporal en el que se almaceno el resultado
+            self.tipoDato = EnumType.boleano
+            return (self.actualTemp - 1)
         elif(root.nombre == 'DIFERENCIA'):
             self.code += '//Start -> Area of operation NOT EQUAL' + self.newLine
             operador1 = self.resolverExpresion(root.getHijo(0))
@@ -131,7 +168,8 @@ class secondRead():
             self.code += '\tL' + str(etiquetaSalida) + ': //Exit tag' + self.newLine
             self.code += '//End -> Area of operation NOT EQUAL' + self.newLine
             self.actualTemp += 1
-            return (self.actualTemp - 1) # Retorno el numero del temporal en el que se almaceno el resultado
+            self.tipoDato = EnumType.boleano
+            return (self.actualTemp - 1)
         elif(root.nombre == 'MAYOR'):
             self.code += '//Start -> Area of operation GREATER' + self.newLine
             operador1 = self.resolverExpresion(root.getHijo(0))
@@ -148,7 +186,8 @@ class secondRead():
             self.code += '\tL' + str(etiquetaSalida) + ': //Exit tag' + self.newLine
             self.code += '//End -> Area of operation GREATER' + self.newLine
             self.actualTemp += 1
-            return (self.actualTemp - 1) # Retorno el numero del temporal en el que se almaceno el resultado
+            self.tipoDato = EnumType.boleano
+            return (self.actualTemp - 1)
         elif(root.nombre == 'MENOR'):
             self.code += '//Start -> Area of operation LESS' + self.newLine
             operador1 = self.resolverExpresion(root.getHijo(0))
@@ -165,7 +204,8 @@ class secondRead():
             self.code += '\tL' + str(etiquetaSalida) + ': //Exit tag' + self.newLine
             self.code += '//End -> Area of operation LESS' + self.newLine
             self.actualTemp += 1
-            return (self.actualTemp - 1) # Retorno el numero del temporal en el que se almaceno el resultado
+            self.tipoDato = EnumType.boleano
+            return (self.actualTemp - 1)
         elif(root.nombre == 'MAYORIGUAL'):
             self.code += '//Start -> Area of operation GREATER OR EQUAL' + self.newLine
             operador1 = self.resolverExpresion(root.getHijo(0))
@@ -182,7 +222,8 @@ class secondRead():
             self.code += '\tL' + str(etiquetaSalida) + ': //Exit tag' + self.newLine
             self.code += '//End -> Area of operation GREATER OR EQUAL' + self.newLine
             self.actualTemp += 1
-            return (self.actualTemp - 1) # Retorno el numero del temporal en el que se almaceno el resultado
+            self.tipoDato = EnumType.boleano
+            return (self.actualTemp - 1)
         elif(root.nombre == 'MENORIGUAL'):
             self.code += '//Start -> Area of operation LESS OR EQUAL' + self.newLine
             operador1 = self.resolverExpresion(root.getHijo(0))
@@ -199,7 +240,8 @@ class secondRead():
             self.code += '\tL' + str(etiquetaSalida) + ': //Exit tag' + self.newLine
             self.code += '//End -> Area of operation LESS OR EQUAL' + self.newLine
             self.actualTemp += 1
-            return (self.actualTemp - 1) # Retorno el numero del temporal en el que se almaceno el resultado
+            self.tipoDato = EnumType.boleano
+            return (self.actualTemp - 1)
         elif(root.nombre == 'OR'):
             self.code += '//Start -> Area of operation OR' + self.newLine
             operador1 = self.resolverExpresion(root.getHijo(0))
@@ -217,7 +259,8 @@ class secondRead():
             self.code += '\tL' + str(etiquetaSalida) + ': //Exit tag' + self.newLine
             self.code += '//End -> Area of operation OR' + self.newLine
             self.actualTemp += 1
-            return (self.actualTemp - 1) # Retorno el numero del temporal en el que se almaceno el resultado
+            self.tipoDato = EnumType.boleano
+            return (self.actualTemp - 1)
         elif(root.nombre == 'AND'):
             self.code += '//Start -> Area of operation AND' + self.newLine
             operador1 = self.resolverExpresion(root.getHijo(0))
@@ -240,7 +283,8 @@ class secondRead():
             self.code += '\tL' + str(etiquetaSalida) + ': //Exit tag' + self.newLine
             self.code += '//End -> Area of operation AND' + self.newLine
             self.actualTemp += 1
-            return (self.actualTemp - 1) # Retorno el numero del temporal en el que se almaceno el resultado
+            self.tipoDato = EnumType.boleano
+            return (self.actualTemp - 1)
         elif(root.nombre == 'NOT'):
             self.code += '//Start -> Area of operation NOT' + self.newLine
             operador1 = self.resolverExpresion(root.getHijo(1))
@@ -287,13 +331,14 @@ class secondRead():
                     return (self.actualTemp - 1)
                 else:
                     # Reportar error
+                    self.tipoDato = EnumType.error
                     print('')
             elif(tipoOperador1 == EnumType.cadena):
                 if(tipoOperador2 == EnumType.entero):
                     self.code += '\tT' + str(self.actualTemp) + ' = SP; //Save environment' + self.newLine
                     entornoActual = self.actualTemp
                     self.actualTemp += 1
-                    self.code += '\tSP = 8; //Set numberPower environment' + self.newLine
+                    self.code += '\tSP = 8; //Set stringTimes environment' + self.newLine
                     self.code += '\tT' + str(self.actualTemp) + ' = SP + 1; //Set base position' + self.newLine
                     posicionBase = self.actualTemp
                     self.actualTemp += 1
@@ -312,9 +357,11 @@ class secondRead():
                     return (self.actualTemp - 1)
                 else:
                     # Reportar error
+                    self.tipoDato = EnumType.error
                     print('')
             else:
                 # Reportar error
+                self.tipoDato = EnumType.error
                 print('')
             self.code += '\tT' + str(self.actualTemp) + ' = T' + str(operador1) + ' + ' + 'T' + str(operador2) + ';' + self.newLine
             self.actualTemp += 1
@@ -370,7 +417,56 @@ class secondRead():
                 self.tipoDato = resultado.type
                 return (self.actualTemp - 1)
             #Reportar error, la variable no existe
+            self.tipoDato = EnumType.error
             return 0
+        elif(root.nombre == 'HACERLOWERCASE'):
+            operador1 = self.resolverExpresion(root.getHijo(2))
+            tipoOperador1 = self.tipoDato
+            if(tipoOperador1 == EnumType.cadena):
+                self.code += '\tT' + str(self.actualTemp) + ' = SP; //Save environment' + self.newLine
+                entornoActual = self.actualTemp
+                self.actualTemp += 1
+                self.code += '\tSP = 4; //Set lowerCase environment' + self.newLine
+                self.code += '\tT' + str(self.actualTemp) + ' = SP + 1; //Set base position' + self.newLine
+                posicionCadena = self.actualTemp
+                self.actualTemp += 1
+                self.code += '\tSTACK[int(T' + str(posicionCadena) + ')] = T' + str(operador1) + '; //Set base value in stack' + self.newLine
+                self.code += '\tstringLowerCase(); //Call function' + self.newLine
+                self.code += '\tT' + str(self.actualTemp) + ' = SP + 0; //Set return position' + self.newLine
+                self.actualTemp += 1
+                self.code += '\tT' + str(self.actualTemp) + ' = STACK[int(T' + str((self.actualTemp - 1)) + ')]; //Get return value' + self.newLine
+                self.actualTemp += 1
+                self.code += '\tSP = T' + str(entornoActual) + '; //Get environment back' + self.newLine
+                self.tipoDato = tipoOperador1
+                return (self.actualTemp - 1)
+            else:
+                # Reportar error
+                self.tipoDato = EnumType.error
+                print('')
+        elif(root.nombre == 'HACERUPPERCASE'):
+            operador1 = self.resolverExpresion(root.getHijo(2))
+            tipoOperador1 = self.tipoDato
+            if(tipoOperador1 == EnumType.cadena):
+                self.code += '\tT' + str(self.actualTemp) + ' = SP; //Save environment' + self.newLine
+                entornoActual = self.actualTemp
+                self.actualTemp += 1
+                self.code += '\tSP = 6; //Set uppercase environment' + self.newLine
+                self.code += '\tT' + str(self.actualTemp) + ' = SP + 1; //Set base position' + self.newLine
+                posicionCadena = self.actualTemp
+                self.actualTemp += 1
+                self.code += '\tSTACK[int(T' + str(posicionCadena) + ')] = T' + str(operador1) + '; //Set base value in stack' + self.newLine
+                self.code += '\tstringUpperCase(); //Call function' + self.newLine
+                self.code += '\tT' + str(self.actualTemp) + ' = SP + 0; //Set return position' + self.newLine
+                self.actualTemp += 1
+                self.code += '\tT' + str(self.actualTemp) + ' = STACK[int(T' + str((self.actualTemp - 1)) + ')]; //Get return value' + self.newLine
+                self.actualTemp += 1
+                self.code += '\tSP = T' + str(entornoActual) + '; //Get environment back' + self.newLine
+                self.tipoDato = tipoOperador1
+                return (self.actualTemp - 1)
+            else:
+                # Reportar error
+                self.tipoDato = EnumType.error
+                print('')
         else:
             print(root.nombre)
             
