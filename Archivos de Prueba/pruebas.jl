@@ -128,7 +128,7 @@
             end;
         end;
 
-        # Funciones
+        # Funciones sin parametros
             # Sin retorno
             function holaMundo()
                 println("Hola mundo desde una funcion sin parametros");
@@ -136,6 +136,18 @@
             
             # Con retorno
             function pruebaRetorno()::String
+                cadena = "Este es un retorno"::String;
+                return cadena;
+            end;
+        
+        # Funciones con parametros
+            # Sin retorno
+            function holaMundo(uno::String, dos::String, tres::String)
+                println("Hola mundo desde una funcion sin parametros");
+            end;
+            
+            # Con retorno
+            function holaMundo(uno::String, dos::String, tres::String)::String
                 cadena = "Este es un retorno"::String;
                 return cadena;
             end;

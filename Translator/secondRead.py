@@ -2,6 +2,7 @@
 # we'll create their 3 address code using the symbol table 
 # generated in the first read, all the 3 address code generates in this file
 from enum import Enum
+from os import environ
 from Models.SintacticNode import SintacticNode
 from Models.Environment import Environment
 from Models.Symbol import EnumType, Symbol
@@ -18,6 +19,8 @@ class secondRead():
         self.code = ''
         self.newLine = '\n'
         self.environment = environment
+        self.environmentList = []
+        self.environmentList.append(self.environment)
 
     def startTranslation(self, root, envName):
         self.firstRead(root, envName)
@@ -79,10 +82,43 @@ class secondRead():
                 self.code += '}' + self.newLine
             else:
                 # Funcion con parametros pero sin retorno
-                print('')
+                self.environmentList.append(self.generarParametros(root.getHijo(3), nombreFuncion, None, root.getHijo(1).linea, root.getHijo(1).columna))
+                self.environment.insertar(nombreFuncion, Symbol(
+                            EnumType.funcion, 'Funcion', None, '', '', self.absolute, self.relative, 1, self.heap, root.getHijo(1).linea, root.getHijo(1).columna, envName, None
+                            ))
+                self.relative += 1
+                self.code += 'func ' + nombreFuncion + '(){' + self.newLine
+                self.generateCode(root.getHijo(5), nombreFuncion)
+                self.code += '}' + self.newLine
         elif(len(root.hijos) == 9):
             # Funcion con parametros y con retorno
-            print('')
+            tipoFuncion = self.obtenerTipo(root.getHijo(5).getHijo(0).nombre)
+            self.environmentList.append(self.generarParametros(root.getHijo(3), nombreFuncion, tipoFuncion, root.getHijo(1).linea, root.getHijo(1).columna))
+            self.environment.insertar(nombreFuncion, Symbol(
+                            EnumType.funcion, 'Funcion', None, '', '', self.absolute, self.relative, 1, self.heap, root.getHijo(1).linea, root.getHijo(1).columna, envName, tipoFuncion
+                            ))
+            self.relative += 1
+            self.code += 'func ' + nombreFuncion + '(){' + self.newLine
+            self.generateCode(root.getHijo(6), nombreFuncion)
+            self.code += '}' + self.newLine
+
+    def generarParametros(self, root, envName, tipoRetorno, linea, columna):
+        contador = 0
+        environment = Environment(self.environment, envName)
+        if(tipoRetorno != None):
+            environment.insertar('Retorno', Symbol(
+                tipoRetorno, 'Retorno', None, '', '', '', contador, 1, self.heap, linea, columna, envName, None
+                ))
+            contador += 1
+        for hijo in root.hijos:
+            if(hijo.nombre == 'PARAMETRO'):
+                nombreParametro = hijo.getHijo(0).valor
+                tipoParametro = self.obtenerTipo(hijo.getHijo(2).getHijo(0).nombre)
+                environment.insertar(nombreParametro, Symbol(
+                    tipoParametro, 'Parameter', None, '', '', '', contador, 1, self.heap, hijo.getHijo(0).linea, hijo.getHijo(0).columna, envName, None
+                    ))
+                contador += 1
+        return environment
 
     def ejecutarWhile(self, root, envName):
         self.continueTag = inicioCiclo = self.maxTag

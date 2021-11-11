@@ -948,8 +948,6 @@ def p_listaParametros_2(t):
     contador += 1
     nodoParametro.addHijo(SintacticNode("IDENTIFICADOR", t[3], t.lineno(3), find_column(input, t.slice[3]), contador))
     contador += 1
-    nodoParametro.addHijo(SintacticNode("IDENTIFICADOR", t[3], t.lineno(3), find_column(input, t.slice[3]), contador))
-    contador += 1
     nodoParametro.addHijo(SintacticNode("DOBLEPUNTOS", "::", t.lineno(4), find_column(input, t.slice[4]), contador))
     contador += 1
     nodoParametro.addHijo(t[5])
@@ -1484,7 +1482,7 @@ def parse(inp):
     if len(errores) == 0:
         # "Environment", "Name", "Type", "Role", "Lower", "Upper", "Absolute", "Relative", "Size", 
         # "Reference", "Row", "Column"
-        for environment in header.environmentList:
+        for environment in second.environmentList:
             addItem(environment, retorno)
     return cadenaConsola, resultado[1], retorno, resultado[0]
 
