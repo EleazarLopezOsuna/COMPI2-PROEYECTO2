@@ -11,7 +11,7 @@ def index():
     return render_template('index.html')
 
 headingsSimbolos = ("Environment", "Name", "Type", "Role", "Lower", "Upper", "Absolute", "Relative", "Size", 
-    "Reference", "Row", "Column")
+    "Reference", "Row", "Column", "Return")
 headingsErrores = ("Type", "Error", "Line", "Column")
 
 @app.route("/analyze", methods=["POST","GET"])

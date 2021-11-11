@@ -1,7 +1,7 @@
 from enum import Enum
 
 class Symbol():
-    def __init__(self, type, role, atributes, lower, upper, absolute, relative, size, reference, row, column, root):
+    def __init__(self, type, role, atributes, lower, upper, absolute, relative, size, reference, row, column, root, functionType):
         self.type = type
         self.role = role
         self.atributes = atributes
@@ -14,6 +14,7 @@ class Symbol():
         self.row = row
         self.column = column
         self.root = root
+        self.functionType = functionType
 
 class EnumType(Enum):
     arreglo = 1

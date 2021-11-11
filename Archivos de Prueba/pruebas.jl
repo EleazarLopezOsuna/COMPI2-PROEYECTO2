@@ -106,3 +106,36 @@
             end;
             print("El valor de a es: ", a, ", ");
         end;
+
+
+        index = -2 :: Int64;
+        index = index + 1;
+
+        while (index != 12)
+            global index = index + 1;
+            if (index == 0 || index == 1 || index == 11 || index == 12) 
+                println("*********************************************************************************************************");
+            elseif (index == 2) 
+                println("**********  ***************  ******                 ******                 ******              **********");
+            elseif (index >= 3 && index <= 5) 
+                println("**********  ***************  ******  *********************  *************  ******  **********************");
+            elseif (index == 6) 
+                println("**********  ***************  ******                 ******                 ******  **********************");
+            elseif (index >= 7 && index <= 9) 
+                println("**********  ***************  ********************   ******  *************  ******  **********************");
+            elseif (index == 10) 
+                println("**********                   ******                 ******  *************  ******              **********");
+            end;
+        end;
+
+        # Funciones
+            # Sin retorno
+            function holaMundo()
+                println("Hola mundo desde una funcion sin parametros");
+            end;
+            
+            # Con retorno
+            function pruebaRetorno()::String
+                cadena = "Este es un retorno"::String;
+                return cadena;
+            end;

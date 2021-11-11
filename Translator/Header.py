@@ -26,6 +26,7 @@
 # 16       |    0     | OutOfBounds     | number
 #-------------------------------------------------------
 # 17       |    0     | DivisionBy0     | number
+from enum import Enum
 from .DefaultFunctions import DefaultFunctions
 from Models.Environment import Environment
 from Models.Symbol import Symbol, EnumType
@@ -73,99 +74,99 @@ class Header():
         # String Concat
         stringConcatEnv = Environment(self.environment, 'stringConcat')
         stringConcatEnv.insertar('return', Symbol(
-            EnumType.cadena, 'Return', None, '', '', '', 0, 1, '', '', '', 'stringConcat'
+            EnumType.cadena, 'Return', None, '', '', '', 0, 1, '', '', '', 'stringConcat', None
             ))
         stringConcatEnv.insertar('String1', Symbol(
-            EnumType.cadena, 'Parameter', None, '', '', '', 1, 1, '', '', '', 'stringConcat'
+            EnumType.cadena, 'Parameter', None, '', '', '', 1, 1, '', '', '', 'stringConcat', None
             ))
         stringConcatEnv.insertar('String2', Symbol(
-            EnumType.cadena, 'Parameter', None, '', '', '', 2, 1, '', '', '', 'stringConcat'
+            EnumType.cadena, 'Parameter', None, '', '', '', 2, 1, '', '', '', 'stringConcat', None
             ))
         self.environment.insertar('stringConcat', Symbol(
-            EnumType.funcion, 'Funtion', stringConcatEnv, '', '', 0, 0, 3, '', '', '', 'Global'
+            EnumType.funcion, 'Funtion', stringConcatEnv, '', '', 0, 0, 3, '', '', '', 'Global', EnumType.cadena
             ))
 
         # String Print
         strinPrintEnv = Environment(self.environment, 'strinPrint')
         strinPrintEnv.insertar('String1', Symbol(
-            EnumType.cadena, 'Parameter', None, '', '', '', 0, 1, '', '', '', 'stringConcat'
+            EnumType.cadena, 'Parameter', None, '', '', '', 0, 1, '', '', '', 'stringConcat', None
             ))
         self.environment.insertar('strinPrint', Symbol(
-            EnumType.funcion, 'Funtion', strinPrintEnv, '', '', 3, 3, 1, '', '', '', 'Global'
+            EnumType.funcion, 'Funtion', strinPrintEnv, '', '', 3, 3, 1, '', '', '', 'Global', None
             ))
 
         # String Lower Case
         stringLowerCaseEnv = Environment(self.environment, 'stringLowerCase')
         stringLowerCaseEnv.insertar('return', Symbol(
-            EnumType.cadena, 'Return', None, '', '', '', 0, 1, '', '', '', 'stringLowerCase'
+            EnumType.cadena, 'Return', None, '', '', '', 0, 1, '', '', '', 'stringLowerCase', None
             ))
         stringLowerCaseEnv.insertar('String1', Symbol(
-            EnumType.cadena, 'Parameter', None, '', '', '', 1, 1, '', '', '', 'stringLowerCase'
+            EnumType.cadena, 'Parameter', None, '', '', '', 1, 1, '', '', '', 'stringLowerCase', None
             ))
         self.environment.insertar('stringLowerCase', Symbol(
-            EnumType.funcion, 'Funtion', stringLowerCaseEnv, '', '', 4, 4, 2, '', '', '', 'Global'
+            EnumType.funcion, 'Funtion', stringLowerCaseEnv, '', '', 4, 4, 2, '', '', '', 'Global', EnumType.cadena
             ))
 
         # String Upper Case
         stringUpperCaseEnv = Environment(self.environment, 'stringUpperCase')
         stringUpperCaseEnv.insertar('return', Symbol(
-            EnumType.cadena, 'Return', None, '', '', '', 0, 1, '', '', '', 'stringUpperCase'
+            EnumType.cadena, 'Return', None, '', '', '', 0, 1, '', '', '', 'stringUpperCase', None
             ))
         stringUpperCaseEnv.insertar('String1', Symbol(
-            EnumType.cadena, 'Parameter', None, '', '', '', 1, 1, '', '', '', 'stringUpperCase'
+            EnumType.cadena, 'Parameter', None, '', '', '', 1, 1, '', '', '', 'stringUpperCase', None
             ))
         self.environment.insertar('stringUpperCase', Symbol(
-            EnumType.funcion, 'Funtion', stringUpperCaseEnv, '', '', 6, 6, 2, '', '', '', 'Global'
+            EnumType.funcion, 'Funtion', stringUpperCaseEnv, '', '', 6, 6, 2, '', '', '', 'Global', EnumType.cadena
             ))
 
         # String Times
         stringTimesEnv = Environment(self.environment, 'stringTimes')
         stringTimesEnv.insertar('return', Symbol(
-            EnumType.cadena, 'Return', None, '', '', '', 0, 1, '', '', '', 'stringTimes'
+            EnumType.cadena, 'Return', None, '', '', '', 0, 1, '', '', '', 'stringTimes', None
             ))
         stringTimesEnv.insertar('String1', Symbol(
-            EnumType.cadena, 'Parameter', None, '', '', '', 1, 1, '', '', '', 'stringTimes'
+            EnumType.cadena, 'Parameter', None, '', '', '', 1, 1, '', '', '', 'stringTimes', None
             ))
         stringTimesEnv.insertar('Number1', Symbol(
-            EnumType.entero, 'Parameter', None, '', '', '', 2, 1, '', '', '', 'stringTimes'
+            EnumType.entero, 'Parameter', None, '', '', '', 2, 1, '', '', '', 'stringTimes', None
             ))
         self.environment.insertar('stringTimes', Symbol(
-            EnumType.funcion, 'Funtion', stringTimesEnv, '', '', 8, 8, 3, '', '', '', 'Global'
+            EnumType.funcion, 'Funtion', stringTimesEnv, '', '', 8, 8, 3, '', '', '', 'Global', EnumType.cadena
             ))
 
         # Number power
         numberPowerEnv = Environment(self.environment, 'numberPower')
         numberPowerEnv.insertar('return', Symbol(
-            EnumType.flotante, 'Return', None, '', '', '', 0, 1, '', '', '', 'numberPower'
+            EnumType.flotante, 'Return', None, '', '', '', 0, 1, '', '', '', 'numberPower', None
             ))
         numberPowerEnv.insertar('Base', Symbol(
-            EnumType.flotante, 'Parameter', None, '', '', '', 1, 1, '', '', '', 'numberPower'
+            EnumType.flotante, 'Parameter', None, '', '', '', 1, 1, '', '', '', 'numberPower', None
             ))
         numberPowerEnv.insertar('Exponent', Symbol(
-            EnumType.entero, 'Parameter', None, '', '', '', 2, 1, '', '', '', 'numberPower'
+            EnumType.entero, 'Parameter', None, '', '', '', 2, 1, '', '', '', 'numberPower', None
             ))
         self.environment.insertar('numberPower', Symbol(
-            EnumType.funcion, 'Funtion', numberPowerEnv, '', '', 11, 11, 3, '', '', '', 'Global'
+            EnumType.funcion, 'Funtion', numberPowerEnv, '', '', 11, 11, 3, '', '', '', 'Global', EnumType.entero
             ))
 
         # Int to String
         intToStringEnv = Environment(self.environment, 'intToString')
         intToStringEnv.insertar('return', Symbol(
-            EnumType.flotante, 'Return', None, '', '', '', 0, 1, '', '', '', 'intToString'
+            EnumType.flotante, 'Return', None, '', '', '', 0, 1, '', '', '', 'intToString', None
             ))
         intToStringEnv.insertar('Numero', Symbol(
-            EnumType.flotante, 'Parameter', None, '', '', '', 1, 1, '', '', '', 'intToString'
+            EnumType.flotante, 'Parameter', None, '', '', '', 1, 1, '', '', '', 'intToString', None
             ))
         self.environment.insertar('intToString', Symbol(
-            EnumType.funcion, 'Funtion', intToStringEnv, '', '', 14, 14, 2, '', '', '', 'Global'
+            EnumType.funcion, 'Funtion', intToStringEnv, '', '', 14, 14, 2, '', '', '', 'Global', EnumType.cadena
             ))
 
         # Out of bounds
         self.environment.insertar('OutOfBounds', Symbol(
-            EnumType.funcion, 'Funtion', None, '', '', 16, 16, 1, '', '', '', 'Global'
+            EnumType.funcion, 'Funtion', None, '', '', 16, 16, 1, '', '', '', 'Global', None
             ))
         
         # Division by 0
         self.environment.insertar('DivisionBy0', Symbol(
-            EnumType.funcion, 'Funtion', None, '', '', 17, 17, 1, '', '', '', 'Global'
+            EnumType.funcion, 'Funtion', None, '', '', 17, 17, 1, '', '', '', 'Global', None
             ))

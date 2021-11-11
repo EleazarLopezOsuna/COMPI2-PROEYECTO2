@@ -538,6 +538,47 @@ def p_declararFuncion_2(t):
     t[0].addHijo(SintacticNode("PUNTOCOMA", ";", t.lineno(7), find_column(input, t.slice[7]), contador))
     contador += 1
 
+def p_declararFuncion_3(t):
+    'declararFuncion    : resFuncion IDENTIFICADOR PARENTESISA listaParametros PARENTESISC DOBLEPUNTOS tipo listaInstrucciones resEnd PUNTOCOMA'
+    global contador
+    t[0] = SintacticNode("DECLARARFUNCION", "DECLARARFUNCION", -1, -1, contador)
+    contador += 1
+    t[0].addHijo(SintacticNode("FUNCTION", "function", t.lineno(1), find_column(input, t.slice[1]), contador))
+    contador += 1
+    t[0].addHijo(SintacticNode("IDENTIFICADOR", t[2], t.lineno(1), find_column(input, t.slice[1]), contador))
+    contador += 1
+    t[0].addHijo(SintacticNode("PARENTESISA", "(", t.lineno(3), find_column(input, t.slice[3]), contador))
+    contador += 1
+    t[0].addHijo(t[4])
+    t[0].addHijo(SintacticNode("PARENTESISC", ")", t.lineno(5), find_column(input, t.slice[5]), contador))
+    contador += 1
+    t[0].addHijo(t[7])
+    t[0].addHijo(t[8])
+    t[0].addHijo(SintacticNode("END", "end", t.lineno(9), find_column(input, t.slice[9]), contador))
+    contador += 1
+    t[0].addHijo(SintacticNode("PUNTOCOMA", ";", t.lineno(10), find_column(input, t.slice[10]), contador))
+    contador += 1
+
+def p_declararFuncion_4(t):
+    'declararFuncion    : resFuncion IDENTIFICADOR PARENTESISA PARENTESISC DOBLEPUNTOS tipo listaInstrucciones resEnd PUNTOCOMA'
+    global contador
+    t[0] = SintacticNode("DECLARARFUNCION", "DECLARARFUNCION", -1, -1, contador)
+    contador += 1
+    t[0].addHijo(SintacticNode("FUNCTION", "function", t.lineno(1), find_column(input, t.slice[1]), contador))
+    contador += 1
+    t[0].addHijo(SintacticNode("IDENTIFICADOR", t[2], t.lineno(2), find_column(input, t.slice[2]), contador))
+    contador += 1
+    t[0].addHijo(SintacticNode("PARENTESISA", "(", t.lineno(3), find_column(input, t.slice[3]), contador))
+    contador += 1
+    t[0].addHijo(SintacticNode("PARENTESISC", ")", t.lineno(4), find_column(input, t.slice[4]), contador))
+    contador += 1
+    t[0].addHijo(t[6])
+    t[0].addHijo(t[7])
+    t[0].addHijo(SintacticNode("END", "end", t.lineno(8), find_column(input, t.slice[8]), contador))
+    contador += 1
+    t[0].addHijo(SintacticNode("PUNTOCOMA", ";", t.lineno(9), find_column(input, t.slice[9]), contador))
+    contador += 1
+
 def p_instruccionIf_1(t):
     'instruccionIf  : resIf expresion listaInstrucciones resEnd PUNTOCOMA'
     global contador
@@ -1434,7 +1475,7 @@ def parse(inp):
     header = Header(25)
     retorno = []
     second = secondRead(root, 4, header.environment)
-    second.generateCode(second.root)
+    second.startTranslation(second.root, 'main')
     second.code += '}'
     header.numeroTemporales = second.actualTemp
     header.generarCodigo()
@@ -1452,8 +1493,8 @@ def addItem(environment, retorno):
     variable:Symbol
     for key in environment.tabla:
         variable = environment.tabla[key]
-        retorno.append([variable.root, key, variable.type, variable.role, variable.lower, 
-        variable.upper, variable.absolute, variable.relative, variable.size, variable.reference, variable.row, variable.column])
+        retorno.append([variable.root, key, str(variable.type).replace('EnumType.', ''), variable.role, variable.lower, 
+        variable.upper, variable.absolute, variable.relative, variable.size, variable.reference, variable.row, variable.column, str(variable.functionType).replace('EnumType.', '')])
         if(variable.type == EnumType.funcion):
             if(variable.atributes != None):
                 addItem(variable.atributes, retorno)

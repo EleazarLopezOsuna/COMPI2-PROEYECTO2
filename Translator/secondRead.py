@@ -15,14 +15,26 @@ class secondRead():
         self.relative = 18
         self.absolute = 18
         self.heap = 0
-        self.code = 'func main(){\n'
+        self.code = ''
         self.newLine = '\n'
         self.environment = environment
 
-    def generateCode(self, root):
+    def startTranslation(self, root, envName):
+        self.firstRead(root, envName)
+        self.code += 'func main(){' + self.newLine
+        self.generateCode(root, envName)
+
+    def firstRead(self, root, envName):
         if(root.nombre == 'INICIO' or root.nombre == 'INSTRUCCION'):
             for hijo in root.hijos:
-                self.generateCode(hijo)
+                self.firstRead(hijo, envName)
+        elif(root.nombre == 'DECLARARFUNCION'):
+            self.ejecutarDeclararFuncion(root, envName)
+
+    def generateCode(self, root, envName):
+        if(root.nombre == 'INICIO' or root.nombre == 'INSTRUCCION'):
+            for hijo in root.hijos:
+                self.generateCode(hijo, envName)
         elif(root.nombre == 'LLAMADAFUNCION'):
             if(root.getHijo(0).nombre == 'PRINT'):
                 self.ejecutarPrint(root)
@@ -30,39 +42,67 @@ class secondRead():
                 self.ejecutarPrint(root)
                 self.code += '\tfmt.Printf("%' + 'c", 10); //New line' + self.newLine
             else:
-                print()
+                print('')
         elif(root.nombre == 'ASIGNACION'):
-            self.ejecutarAsignacion(root)
+            self.ejecutarAsignacion(root, envName)
         elif(root.nombre == 'BLOQUEIF'):
-            self.ejecutarIf(root)
+            self.ejecutarIf(root, envName)
         elif(root.nombre == 'FOR'):
-            self.ejecutarFor(root)
+            self.ejecutarFor(root, envName)
         elif(root.nombre == 'SWHILE'):
-            self.ejecutarWhile(root)
+            self.ejecutarWhile(root, envName)
         elif(root.nombre == 'INSTRUCCIONCONTINUE'):
             self.code += '\tgoto L' + str(self.continueTag) + '; //Go to loop start' + self.newLine
         elif(root.nombre == 'INSTRUCCIONBREAK'):
             self.code += '\tgoto L' + str(self.breakTag) + '; //Go to loop exit' + self.newLine
 
-    def ejecutarWhile(self, root):
+    def ejecutarDeclararFuncion(self, root, envName):
+        nombreFuncion = root.getHijo(1).valor
+        if(len(root.hijos) == 7):
+            # Funcion sin parametros y sin retorno
+            self.environment.insertar(nombreFuncion, Symbol(
+                            EnumType.funcion, 'Funcion', None, '', '', self.absolute, self.relative, 1, self.heap, root.getHijo(1).linea, root.getHijo(1).columna, envName, None
+                            ))
+            self.relative += 1
+            self.code += 'func ' + nombreFuncion + '(){' + self.newLine
+            self.generateCode(root.getHijo(4), nombreFuncion)
+            self.code += '}' + self.newLine
+        elif(len(root.hijos) == 8):
+            if(root.getHijo(4).nombre == 'TIPO'):
+                # Funcion sin parametros pero tiene retorno
+                self.environment.insertar(nombreFuncion, Symbol(
+                            EnumType.funcion, 'Funcion', None, '', '', self.absolute, self.relative, 1, self.heap, root.getHijo(1).linea, root.getHijo(1).columna, envName, self.obtenerTipo(root.getHijo(4).getHijo(0).nombre)
+                            ))
+                self.relative += 1
+                self.code += 'func ' + nombreFuncion + '(){' + self.newLine
+                self.generateCode(root.getHijo(4), nombreFuncion)
+                self.code += '}' + self.newLine
+            else:
+                # Funcion con parametros pero sin retorno
+                print('')
+        elif(len(root.hijos) == 9):
+            # Funcion con parametros y con retorno
+            print('')
+
+    def ejecutarWhile(self, root, envName):
         self.continueTag = inicioCiclo = self.maxTag
         self.maxTag += 1
         self.code += '\tL' + str(inicioCiclo) + ': //Loop start' + self.newLine
         inicio = self.resolverExpresion(root.getHijo(1))
         self.breakTag = salidaCiclo = self.maxTag
         self.maxTag += 1
-        self.code += '\t\tif T' + str(inicio) + ' == 0 {goto L' + str(salidaCiclo) + '}' + self.newLine
-        self.generateCode(root.getHijo(2))
+        self.code += '\t\tif T' + str(inicio) + ' == 0 {goto L' + str(salidaCiclo) + ';}' + self.newLine
+        self.generateCode(root.getHijo(2), envName)
         self.code += '\t\tgoto L' + str(inicioCiclo) + ';' + self.newLine
         self.code += '\tL' + str(salidaCiclo) + ': ' + self.newLine
 
-    def ejecutarFor(self, root):
+    def ejecutarFor(self, root, envName):
         if(len(root.getHijo(3).hijos) == 3):
             # For para rango
             nombreVariable = root.getHijo(1).valor
             resultado = self.environment.buscar(nombreVariable)
             if(resultado == None):
-                self.environment.insertar(nombreVariable, Symbol(EnumType.entero, 'Variable', None, '', '', self.absolute, self.relative, 1, self.heap, root.getHijo(1).linea, root.getHijo(1).columna, 'main'))
+                self.environment.insertar(nombreVariable, Symbol(EnumType.entero, 'Variable', None, '', '', self.absolute, self.relative, 1, self.heap, root.getHijo(1).linea, root.getHijo(1).columna, envName, None))
                 self.relative += 1
             posicionVariable = (self.relative - 1)
             inicio = self.resolverExpresion(root.getHijo(3).getHijo(0))
@@ -81,7 +121,7 @@ class secondRead():
                 self.code += '\tSTACK[' + str(posicionVariable) + '] = T' + str(temporalValor) + '; //Set variable initial value' + self.newLine
                 self.code += '\t\tif T' + str(temporalValor) + ' == T' + str(final) + ' {goto L' + str(salidaCiclo) + ';}' + self.newLine
                 self.actualTemp += 1
-                self.generateCode(root.getHijo(4))
+                self.generateCode(root.getHijo(4), envName)
                 self.code += '\t\tT' + str(temporalValor) + ' = T' + str(temporalValor) + ' + 1; //Update variable' + self.newLine
                 self.code += '\t\tgoto L' + str(inicioCiclo) + '; //Loop return' + self.newLine
                 self.code += '\tL' + str(salidaCiclo) + ': //End of loop' + self.newLine
@@ -92,7 +132,7 @@ class secondRead():
             nombreVariable = root.getHijo(1).valor
             resultado = self.environment.buscar(nombreVariable)
             if(resultado == None):
-                self.environment.insertar(nombreVariable, Symbol(EnumType.caracter, 'Variable', None, '', '', self.absolute, self.relative, 1, self.heap, root.getHijo(1).linea, root.getHijo(1).columna, 'main'))
+                self.environment.insertar(nombreVariable, Symbol(EnumType.caracter, 'Variable', None, '', '', self.absolute, self.relative, 1, self.heap, root.getHijo(1).linea, root.getHijo(1).columna, envName, None))
                 self.relative += 1
             posicionVariable = (self.relative - 1)
             temporalValor = self.resolverExpresion(root.getHijo(3))
@@ -107,12 +147,12 @@ class secondRead():
             self.maxTag += 1
             self.code += '\t\tif T' + str(self.actualTemp) + ' == 36 {goto L' + str(self.salidaCiclo) + ';}' + self.newLine
             self.actualTemp += 1
-            self.generateCode(root.getHijo(4))
+            self.generateCode(root.getHijo(4), envName)
             self.code += '\t\tT' + str(temporalValor) + ' = T' + str(temporalValor) + ' + 1; //Update variable' + self.newLine
             self.code += '\t\tgoto L' + str(self.inicioCiclo) + '; //Loop return' + self.newLine
             self.code += '\tL' + str(self.salidaCiclo) + ': //End of loop' + self.newLine
 
-    def ejecutarIf(self, root):
+    def ejecutarIf(self, root, envName):
         temporalValor = self.resolverExpresion(root.getHijo(1))
         tipoExpresion = self.tipoDato
         if(len(root.hijos) == 5):
@@ -121,7 +161,7 @@ class secondRead():
                 etiquetaFalsa = self.maxTag
                 self.maxTag += 1
                 self.code += '\tif T' + str(temporalValor) + ' == 0 {goto L' + str(etiquetaFalsa) + ';} // Condicion Falsa' + self.newLine
-                self.generateCode(root.getHijo(2))
+                self.generateCode(root.getHijo(2), envName)
                 self.code += '\tL' + str(etiquetaFalsa) + ': ' + self.newLine
             else:
                 # Reportar error
@@ -135,10 +175,10 @@ class secondRead():
                     etiquetaFalsa = self.maxTag
                     self.maxTag += 1
                     self.code += '\tif T' + str(temporalValor) + ' == 0 {goto L' + str(etiquetaFalsa) + ';} // Condicion Falsa' + self.newLine
-                    self.generateCode(root.getHijo(2))
+                    self.generateCode(root.getHijo(2), envName)
                     self.code += '\tgoto L' + str(self.etiquetaSalida) + '; //Exit tag' + self.newLine
                     self.code += '\tL' + str(etiquetaFalsa) + ': ' + self.newLine
-                    self.ejecutarElseIf(root.getHijo(3))
+                    self.ejecutarElseIf(root.getHijo(3), envName)
                     self.code += '\tL' + str(self.etiquetaSalida) + ': ' + self.newLine
             elif(root.getHijo(3).nombre == 'ELSE'):
                 # Es un if con else y sin elseif
@@ -148,16 +188,16 @@ class secondRead():
                     etiquetaSalida = self.maxTag
                     self.maxTag += 1
                     self.code += '\tif T' + str(temporalValor) + ' == 0 {goto L' + str(etiquetaFalsa) + ';} // Condicion verdadera' + self.newLine
-                    self.generateCode(root.getHijo(2))
+                    self.generateCode(root.getHijo(2), envName)
                     self.code += '\tgoto L' + str(etiquetaSalida) + '; // Salimos de la condicion verdadera' + self.newLine
                     self.code += '\tL' + str(etiquetaFalsa) + ': ' + self.newLine
-                    self.generateCode(root.getHijo(3).getHijo(1))
+                    self.generateCode(root.getHijo(3).getHijo(1), envName)
                     self.code += '\tL' + str(etiquetaSalida) + ': ' + self.newLine
                 else:
                     # Reportar error
                     print('')
 
-    def ejecutarElseIf(self, root):
+    def ejecutarElseIf(self, root, envName):
         if(root.valor == 'ELSEIF'):
             print(root.nombre)
             temporalValor = self.resolverExpresion(root.getHijo(1))
@@ -166,16 +206,16 @@ class secondRead():
                 etiquetaFalsa = self.maxTag
                 self.maxTag += 1
                 self.code += '\tif T' + str(temporalValor) + ' == 0 {goto L' + str(etiquetaFalsa) + ';} // Condicion Falsa' + self.newLine
-                self.generateCode(root.getHijo(2))
+                self.generateCode(root.getHijo(2), envName)
                 self.code += '\tgoto L' + str(self.etiquetaSalida) + '; //Exit tag' + self.newLine
                 self.code += '\tL' + str(etiquetaFalsa) + ': ' + self.newLine
             else:
                 # Reportar error
                 print('')
         elif(root.valor == 'ELSE'):
-            self.generateCode(root.getHijo(1))
+            self.generateCode(root.getHijo(1), envName)
         for hijo in root.hijos:
-            self.ejecutarElseIf(hijo)
+            self.ejecutarElseIf(hijo, envName)
             
     def ejecutarPrint(self, root):
         for hijo in root.getHijo(2).hijos:
@@ -214,7 +254,7 @@ class secondRead():
                     self.code += '\t\tstringPrint(); //Call function' + self.newLine
                     self.code += '\t\tSP = T' + str(entornoActual) + '; //Set back the previous environment' + self.newLine
 
-    def ejecutarAsignacion(self, root):
+    def ejecutarAsignacion(self, root, envName):
         if(len(root.hijos) == 6):
             # asignacion : IDENTIFICADOR IGUAL expresion DOBLEPUNTOS tipo (6)
             if(root.getHijo(4).getHijo(0).nombre in ('INT64', 'FLOAT64', 'BOLEANO', 'CHAR', 'STRING')):
@@ -225,11 +265,11 @@ class secondRead():
                     # La variable no existe, debemos crear una
                     if hijo.nombre in ('CHAR', 'STRING'):
                         self.environment.insertar(nombreVariable, Symbol(
-                            self.obtenerTipo(hijo.nombre), 'Variable', None, '', '', self.absolute, self.relative, 1, self.heap, hijo.linea, hijo.columna, 'main'
+                            self.obtenerTipo(hijo.nombre), 'Variable', None, '', '', self.absolute, self.relative, 1, self.heap, hijo.linea, hijo.columna, envName, None
                             ))
                     else:
                         self.environment.insertar(nombreVariable, Symbol(
-                            self.obtenerTipo(hijo.nombre), 'Variable', None, '', '', self.absolute, self.relative, 1, '', hijo.linea, hijo.columna, 'main'
+                            self.obtenerTipo(hijo.nombre), 'Variable', None, '', '', self.absolute, self.relative, 1, '', hijo.linea, hijo.columna, envName, None
                          ))
                     temporalValor = self.resolverExpresion(root.getHijo(2))
                     self.code += '\tT' + str(self.actualTemp) + ' = SP + ' + str(self.relative) + '; //Get variable relative position' + self.newLine
@@ -698,7 +738,3 @@ class secondRead():
             return operador1
         else:
             print(root.nombre)
-            
-    #def resolverExpresionStack(self, root):
-        
-    #def resolverExpresionHeap(self, root):
