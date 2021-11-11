@@ -37,11 +37,53 @@ class secondRead():
             self.ejecutarIf(root)
         elif(root.nombre == 'FOR'):
             self.ejecutarFor(root)
+        elif(root.nombre == 'SWHILE'):
+            self.ejecutarWhile(root)
+
+    def ejecutarWhile(self, root):
+        self.continueTag = inicioCiclo = self.maxTag
+        self.maxTag += 1
+        self.code += '\tL' + str(inicioCiclo) + ': //Loop start' + self.newLine
+        inicio = self.resolverExpresion(root.getHijo(1))
+        self.breakTag = salidaCiclo = self.maxTag
+        self.maxTag += 1
+        self.code += '\t\tif T' + str(inicio) + ' == 0 {goto L' + str(salidaCiclo) + '}' + self.newLine
+        self.generateCode(root.getHijo(2))
+        self.code += '\t\tgoto L' + str(inicioCiclo) + ';' + self.newLine
+        self.code += '\tL' + str(salidaCiclo) + ': ' + self.newLine
 
     def ejecutarFor(self, root):
         if(len(root.getHijo(3).hijos) == 3):
             # For para rango
-            print('')
+            nombreVariable = root.getHijo(1).valor
+            resultado = self.environment.buscar(nombreVariable)
+            if(resultado == None):
+                self.environment.insertar(nombreVariable, Symbol(EnumType.entero, 'Variable', None, '', '', self.absolute, self.relative, 1, self.heap, root.getHijo(1).linea, root.getHijo(1).columna, 'main'))
+                self.relative += 1
+            posicionVariable = (self.relative - 1)
+            inicio = self.resolverExpresion(root.getHijo(3).getHijo(0))
+            tipoInicio = self.tipoDato
+            final = self.resolverExpresion(root.getHijo(3).getHijo(2))
+            tipoFinal = self.tipoDato
+            if(tipoInicio == EnumType.entero and tipoFinal == EnumType.entero):
+                self.code += '\tT' + str(self.actualTemp) + ' = T' + str(inicio) + '; //Set variable initial value' + self.newLine
+                temporalValor = self.actualTemp
+                self.actualTemp += 1
+                self.code += '\tL' + str(self.maxTag) + ': //Tag to loop' + self.newLine
+                self.continueTag = inicioCiclo = self.maxTag
+                self.maxTag += 1
+                self.breakTag = salidaCiclo = self.maxTag
+                self.maxTag += 1
+                self.code += '\tSTACK[' + str(posicionVariable) + '] = T' + str(temporalValor) + '; //Set variable initial value' + self.newLine
+                self.code += '\t\tif T' + str(temporalValor) + ' == T' + str(final) + ' {goto L' + str(salidaCiclo) + ';}' + self.newLine
+                self.actualTemp += 1
+                self.generateCode(root.getHijo(4))
+                self.code += '\t\tT' + str(temporalValor) + ' = T' + str(temporalValor) + ' + 1; //Update variable' + self.newLine
+                self.code += '\t\tgoto L' + str(inicioCiclo) + '; //Loop return' + self.newLine
+                self.code += '\tL' + str(salidaCiclo) + ': //End of loop' + self.newLine
+            else:
+                # Reportar error
+                print('')
         elif(len(root.getHijo(3).hijos) == 1):
             nombreVariable = root.getHijo(1).valor
             resultado = self.environment.buscar(nombreVariable)
@@ -54,7 +96,7 @@ class secondRead():
             self.actualTemp += 1
             self.code += '\tL' + str(self.maxTag) + ': //Tag to loop' + self.newLine
             self.code += '\tT' + str(self.actualTemp) + ' = HEAP[int(T' + str(temporalValor) + ')]; //Get heap value' + self.newLine
-            self.code += '\tSTACK[int(T' + str(self.actualTemp - 1) + ')] = T' + str(self.actualTemp) + '; //Set variable initial value' + self.newLine
+            self.code += '\tSTACK[int(T' + str(self.actualTemp - 1) + ')] = T' + str(self.actualTemp) + '; //Set variable value' + self.newLine
             self.inicioCiclo = self.maxTag
             self.maxTag += 1
             self.salidaCiclo = self.maxTag
@@ -152,7 +194,7 @@ class secondRead():
                     self.code += '\tT' + str(self.actualTemp) + ' = HP; //Save environment' + self.newLine
                     hpActual = self.actualTemp
                     self.actualTemp += 1
-                    self.code += '\tif(T' + str(temporalValor) + ' > 0) {goto L' + str(self.maxTag) + ';} // Number is positive' + self.newLine
+                    self.code += '\tif(T' + str(temporalValor) + ' >= 0) {goto L' + str(self.maxTag) + ';} // Number is positive' + self.newLine
                     self.code += '\tHEAP[int(HP)] = 45; //Add negative symbol to string' + self.newLine
                     self.code += '\tHP = HP + 1; //Increase HP' + self.newLine
                     self.code += '\tT' + str(temporalValor) + ' = -T' + str(temporalValor) + '; //Set number as positive' + self.newLine
@@ -646,6 +688,10 @@ class secondRead():
                 # Reportar error
                 self.tipoDato = EnumType.error
                 print('')
+        elif(root.nombre == 'NEGATIVO'):
+            operador1 = self.resolverExpresion(root.getHijo(1))
+            self.code += '\tT' + str(operador1) + ' = -1 * T' + str(operador1) + '; //Set number as negative' + self.newLine
+            return operador1
         else:
             print(root.nombre)
             

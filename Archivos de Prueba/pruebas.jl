@@ -66,6 +66,10 @@
             println("variable1 es otro");
         end;
 
+        for i in 1:10
+            println(i);
+        end;
+
         output = "" :: String;
         for i in 0:9
 
@@ -88,4 +92,17 @@
         variable1 = "Prueba for con string" :: String;
         for i in variable1
             println(i);
+        end;
+
+        a = -1 :: Int64;
+        while (a < 5)
+            a = a + 1;
+            if a == 3
+                print("a");
+                #continue;
+            elseif a == 4
+                println("b");
+                #break;
+            end;
+            print("El valor de a es: ", a, ", ");
         end;
