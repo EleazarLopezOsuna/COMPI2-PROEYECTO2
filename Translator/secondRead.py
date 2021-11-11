@@ -35,6 +35,36 @@ class secondRead():
             self.ejecutarAsignacion(root)
         elif(root.nombre == 'BLOQUEIF'):
             self.ejecutarIf(root)
+        elif(root.nombre == 'FOR'):
+            self.ejecutarFor(root)
+
+    def ejecutarFor(self, root):
+        if(len(root.getHijo(3).hijos) == 3):
+            # For para rango
+            print('')
+        elif(len(root.getHijo(3).hijos) == 1):
+            nombreVariable = root.getHijo(1).valor
+            resultado = self.environment.buscar(nombreVariable)
+            if(resultado == None):
+                self.environment.insertar(nombreVariable, Symbol(EnumType.caracter, 'Variable', None, '', '', self.absolute, self.relative, 1, self.heap, root.getHijo(1).linea, root.getHijo(1).columna, 'main'))
+                self.relative += 1
+            posicionVariable = (self.relative - 1)
+            temporalValor = self.resolverExpresion(root.getHijo(3))
+            self.code += '\tT' + str(self.actualTemp) + ' = SP + ' + str(posicionVariable) + '; //Set variable position' + self.newLine
+            self.actualTemp += 1
+            self.code += '\tL' + str(self.maxTag) + ': //Tag to loop' + self.newLine
+            self.code += '\tT' + str(self.actualTemp) + ' = HEAP[int(T' + str(temporalValor) + ')]; //Get heap value' + self.newLine
+            self.code += '\tSTACK[int(T' + str(self.actualTemp - 1) + ')] = T' + str(self.actualTemp) + '; //Set variable initial value' + self.newLine
+            self.inicioCiclo = self.maxTag
+            self.maxTag += 1
+            self.salidaCiclo = self.maxTag
+            self.maxTag += 1
+            self.code += '\t\tif T' + str(self.actualTemp) + ' == 36 {goto L' + str(self.salidaCiclo) + ';}' + self.newLine
+            self.actualTemp += 1
+            self.generateCode(root.getHijo(4))
+            self.code += '\t\tT' + str(temporalValor) + ' = T' + str(temporalValor) + ' + 1; //Update variable' + self.newLine
+            self.code += '\t\tgoto L' + str(self.inicioCiclo) + '; //Loop return' + self.newLine
+            self.code += '\tL' + str(self.salidaCiclo) + ': //End of loop' + self.newLine
 
     def ejecutarIf(self, root):
         temporalValor = self.resolverExpresion(root.getHijo(1))
@@ -106,13 +136,15 @@ class secondRead():
             if(hijo.nombre == 'EXPRESION'):
                 temporalValor = self.resolverExpresion(hijo)
                 tipoExpresion = self.tipoDato
-                if(tipoExpresion == EnumType.cadena or tipoExpresion == EnumType.caracter):
+                if(tipoExpresion == EnumType.cadena):
                     self.code += '\tT' + str(self.actualTemp) + ' = SP; //Save environment' + self.newLine
                     self.code += '\tSP = 3; //Change environment' + self.newLine
                     self.code += '\tSTACK[int(SP)] = T' + str(temporalValor) + '; //Give start value to the function' + self.newLine
                     self.code += '\tstringPrint(); //Call function' + self.newLine
                     self.code += '\tSP = T' + str(self.actualTemp) + '; //Set back the previous environment' + self.newLine
                     self.actualTemp += 1
+                elif(tipoExpresion == EnumType.caracter):
+                    self.code += '\tfmt.Printf("%' + 'c", int(T' + str(temporalValor) + ')); //Give start value to the function' + self.newLine
                 elif(tipoExpresion == EnumType.entero or tipoExpresion == EnumType.boleano):
                     self.code += '\tT' + str(self.actualTemp) + ' = SP; //Save environment' + self.newLine
                     entornoActual = self.actualTemp
@@ -243,6 +275,25 @@ class secondRead():
                     self.tipoDato = EnumType.entero
                 return (self.actualTemp - 1)
             elif(tipoOperador1 == EnumType.cadena and tipoOperador2 == EnumType.cadena):
+                self.code += '\tT' + str(self.actualTemp) + ' = SP; //Save environment' + self.newLine
+                entornoActual = self.actualTemp
+                self.actualTemp += 1
+                self.code += '\tSP = 0; //Set stringConcat environment' + self.newLine
+                self.code += '\tT' + str(self.actualTemp) + ' = SP + 1; //Set base position' + self.newLine
+                posicionBase = self.actualTemp
+                self.actualTemp += 1
+                self.code += '\tT' + str(self.actualTemp) + ' = SP + 2; //Set exponent position' + self.newLine
+                posicionExponente = self.actualTemp
+                self.actualTemp += 1
+                self.code += '\tSTACK[int(T' + str(posicionBase) + ')] = T' + str(operador1) + '; //Set base value in stack' + self.newLine
+                self.code += '\tSTACK[int(T' + str(posicionExponente) + ')] = T' + str(operador2) + '; //Set exponent value in stack' + self.newLine
+                self.code += '\tstringConcat(); //Call function' + self.newLine
+                self.code += '\tT' + str(self.actualTemp) + ' = SP + 0; //Set return position' + self.newLine
+                self.actualTemp += 1
+                self.code += '\tT' + str(self.actualTemp) + ' = STACK[int(T' + str((self.actualTemp - 1)) + ')]; //Get return value' + self.newLine
+                self.actualTemp += 1
+                self.code += '\tSP = T' + str(entornoActual) + '; //Get environment back' + self.newLine
+                self.tipoDato = tipoOperador1
                 return (self.actualTemp - 1)
             else:
                 # Reportar error

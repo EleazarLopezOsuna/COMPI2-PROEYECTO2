@@ -34,6 +34,10 @@
         println(val1, " ", val2);
         println("---------------------------------");
 
+        cadena1 = "Hola " :: String;
+        cadena2 = "esta es una prueba" :: String;
+        println(cadena1 * cadena2);
+
     # If
         variable1 = 2 ::Int64;
         variable2 = 3 ::Int64;
@@ -60,4 +64,28 @@
             println("variable1 es 4");
         else
             println("variable1 es otro");
+        end;
+
+        output = "" :: String;
+        for i in 0:9
+
+            output = "";
+            for j in 0:(10 - i)
+                output = output * " ";
+            end;
+        
+            for k in 0:i 
+                output = output * "* ";
+            end;
+            println(output);
+        
+        end;
+
+        for i in "Cama"
+            println(i);
+        end;
+
+        variable1 = "Prueba for con string" :: String;
+        for i in variable1
+            println(i);
         end;
