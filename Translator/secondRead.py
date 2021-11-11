@@ -39,6 +39,10 @@ class secondRead():
             self.ejecutarFor(root)
         elif(root.nombre == 'SWHILE'):
             self.ejecutarWhile(root)
+        elif(root.nombre == 'INSTRUCCIONCONTINUE'):
+            self.code += '\tgoto L' + str(self.continueTag) + '; //Go to loop start' + self.newLine
+        elif(root.nombre == 'INSTRUCCIONBREAK'):
+            self.code += '\tgoto L' + str(self.breakTag) + '; //Go to loop exit' + self.newLine
 
     def ejecutarWhile(self, root):
         self.continueTag = inicioCiclo = self.maxTag

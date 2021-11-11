@@ -99,10 +99,10 @@
             a = a + 1;
             if a == 3
                 print("a");
-                #continue;
+                continue;
             elseif a == 4
                 println("b");
-                #break;
+                break;
             end;
             print("El valor de a es: ", a, ", ");
         end;
