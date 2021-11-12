@@ -32,6 +32,8 @@ class secondRead():
         self.firstRead(root, self.environment)
         self.code += 'func main(){' + self.newLine
         self.contadorLineas += 1
+        self.code += '\tSP = 18;' + self.newLine
+        self.contadorLineas += 1
         self.inFunction = 0
         nuevoEntorno = Environment(self.environment, 'main')
         self.environmentList.append(nuevoEntorno)
@@ -114,12 +116,15 @@ class secondRead():
             # Con parametros
             nombreFuncion = root.getHijo(0).valor
             resultado = actual.buscar(nombreFuncion)
+            if(self.inFunction == 1):
+                print('Estoy en una funcion')
             self.code += '\tT' + str(self.actualTemp) + ' = SP; //Save actual environment' + self.newLine
             self.contadorLineas += 1
             valorTemporal = self.actualTemp
             self.actualTemp += 1
-            self.code += '\tSP = ' + str(resultado.relative) + '; //Set new environment' + self.newLine
-            self.contadorLineas += 1
+            self.code += '\tSP = SP + 1; //Set new environment' + self.newLine
+            #self.code += '\tSP = ' + str(resultado.relative) + '; //Set new environment' + self.newLine
+            #self.contadorLineas += 1
             # Inicio paso de variables
             contador = 1
             if(resultado.functionType == None):
