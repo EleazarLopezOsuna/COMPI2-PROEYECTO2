@@ -85,13 +85,13 @@
         
         end;
 
-        for i in "Cama"
-            println(i);
+        for l in "Cama"
+            println(l);
         end;
 
         variable1 = "Prueba for con string" :: String;
-        for i in variable1
-            println(i);
+        for m in variable1
+            println(m);
         end;
 
         a = -1 :: Int64;
@@ -151,3 +151,60 @@
                 cadena = "Este es un retorno"::String;
                 return cadena;
             end;
+
+        # Llamada a funciones sin recursividad
+            # Sin retorno
+                # Sin parametros
+                function sinParametros()
+                    cadena1 = "Hola mundo desde una funcion sin parametros" ::String;
+                    cadena2 = "Cadena2" ::String;
+                    println(cadena2);
+                end;
+                sinParametros();
+
+                # Con parametro
+                function conParametros(uno::String, dos::String, tres::String)
+                    println("Hola mundo desde una funcion sin parametros");
+                end;
+                conParametros();
+            
+            # Con retorno
+                # Sin parametros
+                function sinParametrosRetorno()::String
+                    cadena = "Hola mundo desde una funcion sin parametros pero con retorno" ::String;
+                    return cadena;
+                end;
+                variable1 = sinParametrosRetorno()::String;
+                variable2 = "Prueba"::String;
+                println(variable2);
+
+                # Con parametro
+                function conParametrosRetorno(uno::String, dos::String, tres::String)::String
+                    cadena = "Este es un retorno " * uno * dos * tres * " de una funcion con parametros"::String;
+                    return cadena;
+                end;
+                conParametrosRetorno();
+
+
+
+# Comprobar si un numero es par o impar
+function verificarNumero(numero::Int64)::String
+    if (numero%2 == 0)
+        return "El numero: " * numero * " es par";
+    else
+        return "El numero: " * numero * " es impar";
+    end;
+
+print(verificarNumero(23));
+
+
+
+function verificarNumero()::String
+    numero = 23::Int64;
+  if (numero == 0)
+      return "El numero: " * string(numero) * " es par";
+  else
+      return "El numero: " * string(numero) * " es impar";
+  end;
+end;
+print(verificarNumero());

@@ -1473,7 +1473,7 @@ def parse(inp):
     header = Header(25)
     retorno = []
     second = secondRead(root, 4, header.environment)
-    second.startTranslation(second.root, 'main')
+    second.startTranslation(second.root)
     second.code += '}'
     header.numeroTemporales = second.actualTemp
     header.generarCodigo()
