@@ -164,9 +164,9 @@
 
                 # Con parametro
                 function conParametros(uno::String, dos::String, tres::String)
-                    println("Hola mundo desde una funcion sin parametros");
+                    println(string(uno) * " mundo desde una " * dos * " con " * tres);
                 end;
-                conParametros();
+                conParametros("Hola", "funcion", "parametros");
             
             # Con retorno
                 # Sin parametros
@@ -194,7 +194,7 @@ function verificarNumero(numero::Int64)::String
     else
         return "El numero: " * numero * " es impar";
     end;
-
+end;
 print(verificarNumero(23));
 
 
@@ -208,3 +208,34 @@ function verificarNumero()::String
   end;
 end;
 print(verificarNumero());
+
+
+
+
+
+
+
+
+function conParametros(uno::Int64, dos::Int64, tres::Int64)
+    println(string(uno) * " mundo desde una " * string(dos) * " con " * string(tres));
+end;
+conParametros(1, 2, 3);
+
+
+function conParametros(uno::Int64, dos::Int64, tres::Int64)::Int64
+    println(string(uno) * " mundo desde una " * string(dos) * " con " * string(tres));
+  	return uno * dos + tres;
+end;
+println(string(conParametros(1, 2, 3)));
+
+function conParametros(uno::Int64, dos::Int64, tres::Int64)::Int64
+    println(string(uno) * " mundo desde una " * string(dos) * " con " * string(tres));
+  	variable = uno * dos + tres ::Int64;
+  	return variable;
+end;
+println(conParametros(1, 2, 3));
+
+function conParametros(uno::String, dos::String, tres::String)
+    println(uno * " mundo desde una " * dos * " con " * tres);
+end;
+conParametros("Hola", "funcion", "parametros");

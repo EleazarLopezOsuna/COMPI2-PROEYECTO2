@@ -85,7 +85,7 @@ class secondRead():
         self.contadorLineas += 1
 
     def ejecutarLlamadaFuncion(self, root, actual):
-        if(len(root.hijos) == 4 or ()):
+        if(len(root.hijos) == 4):
             # Sin parametros
             nombreFuncion = root.getHijo(0).valor
             resultado = actual.buscar(nombreFuncion)
@@ -112,11 +112,84 @@ class secondRead():
             # Con parametros
             nombreFuncion = root.getHijo(0).valor
             resultado = actual.buscar(nombreFuncion)
+            self.code += '\tT' + str(self.actualTemp) + ' = SP; //Save actual environment' + self.newLine
+            self.contadorLineas += 1
+            valorTemporal = self.actualTemp
+            self.actualTemp += 1
+            self.code += '\tSP = ' + str(resultado.relative) + '; //Set new environment' + self.newLine
+            self.contadorLineas += 1
+            # Inicio paso de variables
+            contador = 1
             if(resultado.functionType == None):
-                # Con retorno
-                self.code += nombreFuncion + '(); //Call function ' + nombreFuncion + self.newLine
-                self.contadorLineas += 1
-            print('')
+                contador = 0
+            for hijo in root.getHijo(2).hijos:
+                if(hijo.nombre == 'EXPRESION'):
+                    operador1 = self.resolverExpresion(hijo, actual)
+                    tipoOperador1 = self.tipoDato
+                    if(tipoOperador1 in (EnumType.entero, EnumType.flotante, EnumType.boleano)):
+                        self.code += '\tT' + str(self.actualTemp) + ' = SP + ' + str(contador) + '; // Set position for variable' + self.newLine
+                        self.actualTemp += 1
+                        self.contadorLineas += 1
+                        self.code += '\tSTACK[int(T' + str(self.actualTemp - 1) + ')] = T' + str(operador1) + '; // Set parameter value' + self.newLine
+                        self.contadorLineas += 1
+                        contador += 1
+                    else:
+                        self.code += '\tT' + str(self.actualTemp) + ' = HP; //Save start of new string' + self.newLine
+                        posHeap = self.actualTemp
+                        self.actualTemp += 1
+                        self.contadorLineas += 1
+                        self.code += '\tT' + str(self.actualTemp) + ' = T' + str(operador1) + '; // Set position for variable' + self.newLine
+                        caracter = self.actualTemp
+                        self.actualTemp += 1
+                        self.contadorLineas += 1
+                        self.code += '\tT' + str(self.actualTemp) + ' = T' + str(self.actualTemp - 1) + '; //Start pos' + self.newLine
+                        self.contadorLineas += 1
+                        self.code += '\tL' + str(self.maxTag) + ': //Loop tag' + self.newLine
+                        tagLoop = self.maxTag
+                        self.maxTag += 1
+                        self.contadorLineas += 1
+                        self.code += '\t\tT' + str(caracter) + ' = HEAP[int(T' + str(self.actualTemp) + ')]; //Get caracter' + self.newLine
+                        self.contadorLineas += 1
+                        tagSalida = self.maxTag
+                        self.maxTag += 1
+                        self.code += '\t\tif T' + str(caracter) + ' == 36 {goto L' + str(tagSalida) + ';} //End of string' + self.newLine
+                        self.optimizationTable.insertar('', '', self.contadorLineas, 'Creacion de codigo', 'Mirilla - Regla 3')
+                        self.contadorLineas += 1
+                        self.code += '\t\tHEAP[int(HP)] = T' + str(caracter) + '; //Insert character in heap' + self.newLine
+                        self.contadorLineas += 1
+                        self.code += '\t\tHP = HP + 1; //Increase hp' + self.newLine
+                        self.contadorLineas += 1
+                        self.code += '\t\tT' + str(self.actualTemp) + ' = T' + str(self.actualTemp) + ' + 1; //Increase index' + self.newLine
+                        self.actualTemp += 1
+                        self.contadorLineas += 1
+                        self.code += '\t\tgoto L' + str(tagLoop) + '; //Go back to loop' + self.newLine
+                        self.contadorLineas += 1
+                        self.code += '\tL' + str(tagSalida) + ': //End of loop' + self.newLine
+                        self.contadorLineas += 1
+                        self.code += '\tHEAP[int(HP)] = 36; //Add end of string' + self.newLine
+                        self.contadorLineas += 1
+                        self.code += '\tHP = HP + 1; //Increase hp' + self.newLine
+                        self.contadorLineas += 1
+                        self.code += '\tT' + str(self.actualTemp) + ' = SP + ' + str(contador) + '; // Set position for variable' + self.newLine
+                        self.actualTemp += 1
+                        self.contadorLineas += 1
+                        self.code += '\tSTACK[int(T' + str(self.actualTemp - 1) + ')] = T' + str(posHeap) + '; // Set parameter value' + self.newLine
+                        self.contadorLineas += 1
+                        contador += 1
+            # Finaliza paso de variables
+            self.code += '\t' + nombreFuncion + '(); //Call function ' + nombreFuncion + self.newLine
+            self.contadorLineas += 1
+            self.code += '\tT' + str(self.actualTemp) + ' = SP + 0; //Get return position' + self.newLine
+            self.contadorLineas += 1
+            self.actualTemp += 1
+            self.code += '\tT' + str(self.actualTemp) + ' = STACK[int(T' + str(self.actualTemp - 1) +')]; // Get return value' + self.newLine
+            retorno = self.actualTemp
+            self.contadorLineas += 1
+            self.actualTemp += 1
+            self.code += '\tSP = T' + str(valorTemporal) + '; //Get previous environment back' + self.newLine
+            self.contadorLineas += 1
+            self.tipoDato = resultado.functionType
+            return retorno
 
     def guardarVariablesEnStrack(self, actual):
         print('')
@@ -183,7 +256,7 @@ class secondRead():
                 self.contadorLineas += 1
                 self.salidaFuncion = self.maxTag
                 self.maxTag += 1
-                self.generateCode(root.getHijo(6), nombreFuncion, nuevoEntorno)
+                self.generateCode(root.getHijo(5), nuevoEntorno)
                 actual.insertar(nombreFuncion, Symbol(
                             EnumType.funcion, 'Funcion', None, '', '', self.absolute, self.relative, len(nuevoEntorno.tabla),'', root.getHijo(1).linea, root.getHijo(1).columna, actual.nombre, None
                             ))
