@@ -1,0 +1,1393 @@
+Created by PLY version 3.11 (http://www.dabeaz.com/ply)
+
+Unused terminals:
+
+    resPackage
+
+Grammar
+
+Rule 0     S' -> init
+Rule 1     init -> listaInstrucciones
+Rule 2     import -> resImport PARENTESISA CADENA PARENTESISC PUNTOCOMA
+Rule 3     arreglo -> resVar IDENTIFICADOR CORCHETEA ENTERO CORCHETEC resFloat64 PUNTOCOMA
+Rule 4     variable -> resVar listaVariable resFloat64 PUNTOCOMA
+Rule 5     listaVariable -> listaVariable COMA IDENTIFICADOR
+Rule 6     listaVariable -> IDENTIFICADOR
+Rule 7     listaInstrucciones -> listaInstrucciones instruccion
+Rule 8     listaInstrucciones -> instruccion
+Rule 9     instruccion -> function
+Rule 10    instruccion -> temporal PUNTOCOMA
+Rule 11    instruccion -> etiqueta
+Rule 12    instruccion -> ir PUNTOCOMA
+Rule 13    instruccion -> evaluacion
+Rule 14    instruccion -> imprimir PUNTOCOMA
+Rule 15    instruccion -> llamar PUNTOCOMA
+Rule 16    instruccion -> acceso PUNTOCOMA
+Rule 17    instruccion -> resReturn PUNTOCOMA
+Rule 18    instriccion -> LLAVEC
+Rule 19    function -> resFunc IDENTIFICADOR PARENTESISA PARENTESISC LLAVEA
+Rule 20    function -> resFunc resMain PARENTESISA PARENTESISC LLAVEA
+Rule 21    temporal -> IDENTIFICADOR IGUAL tipo
+Rule 22    temporal -> IDENTIFICADOR IGUAL IDENTIFICADOR CORCHETEA resInt PARENTESISA tipo PARENTESISC CORCHETEC
+Rule 23    temporal -> IDENTIFICADOR IGUAL IDENTIFICADOR CORCHETEA tipo CORCHETEC
+Rule 24    temporal -> IDENTIFICADOR IGUAL tipo operador tipo
+Rule 25    temporal -> IDENTIFICADOR IGUAL resMath PUNTO resMod PARENTESISA tipo COMA tipo PARENTESISC
+Rule 26    temporal -> IDENTIFICADOR IGUAL RESTA tipo
+Rule 27    tipo -> ENTERO
+Rule 28    tipo -> FLOTANTE
+Rule 29    tipo -> IDENTIFICADOR
+Rule 30    operador -> SUMA
+Rule 31    operador -> RESTA
+Rule 32    operador -> MULTIPLICACION
+Rule 33    operador -> DIVISION
+Rule 34    operador -> MAYOR
+Rule 35    operador -> MENOR
+Rule 36    operador -> MAYORIGUAL
+Rule 37    operador -> MENORIGUAL
+Rule 38    operador -> IGUALIGUAL
+Rule 39    operador -> DIFERENTE
+Rule 40    etiqueta -> IDENTIFICADOR DOSPUNTOS
+Rule 41    ir -> resGoto IDENTIFICADOR
+Rule 42    evaluacion -> resIf PARENTESISA tipo operador tipo PARENTESISC LLAVEA resGoto IDENTIFICADOR PUNTOCOMA LLAVEC
+Rule 43    imprimir -> resFmt PUNTO resPrintf PARENTESISA CADENA COMA tipo PARENTESISC
+Rule 44    imprimir -> resFmt PUNTO resPrintf PARENTESISA CADENA COMA IDENTIFICADOR CORCHETEA resInt PARENTESISA tipo PARENTESISC CORCHETEC PARENTESISC
+Rule 45    imprimir -> resFmt PUNTO resPrintf PARENTESISA CADENA COMA IDENTIFICADOR CORCHETEA tipo CORCHETEC PARENTESISC
+Rule 46    imprimir -> resFmt PUNTO resPrintf PARENTESISA CADENA COMA resInt PARENTESISA tipo PARENTESISC PARENTESISC
+Rule 47    llamar -> IDENTIFICADOR PARENTESISA PARENTESISC
+Rule 48    acceso -> IDENTIFICADOR CORCHETEA resInt PARENTESISA tipo PARENTESISC CORCHETEC IGUAL tipo
+Rule 49    acceso -> IDENTIFICADOR CORCHETEA tipo CORCHETEC IGUAL tipo
+
+Terminals, with rules where they appear
+
+CADENA               : 2 43 44 45 46
+COMA                 : 5 25 43 44 45 46
+CORCHETEA            : 3 22 23 44 45 48 49
+CORCHETEC            : 3 22 23 44 45 48 49
+DIFERENTE            : 39
+DIVISION             : 33
+DOSPUNTOS            : 40
+ENTERO               : 3 27
+FLOTANTE             : 28
+IDENTIFICADOR        : 3 5 6 19 21 22 22 23 23 24 25 26 29 40 41 42 44 45 47 48 49
+IGUAL                : 21 22 23 24 25 26 48 49
+IGUALIGUAL           : 38
+LLAVEA               : 19 20 42
+LLAVEC               : 18 42
+MAYOR                : 34
+MAYORIGUAL           : 36
+MENOR                : 35
+MENORIGUAL           : 37
+MULTIPLICACION       : 32
+PARENTESISA          : 2 19 20 22 25 42 43 44 44 45 46 46 47 48
+PARENTESISC          : 2 19 20 22 25 42 43 44 44 45 46 46 47 48
+PUNTO                : 25 43 44 45 46
+PUNTOCOMA            : 2 3 4 10 12 14 15 16 17 42
+RESTA                : 26 31
+SUMA                 : 30
+error                : 
+resFloat64           : 3 4
+resFmt               : 43 44 45 46
+resFunc              : 19 20
+resGoto              : 41 42
+resIf                : 42
+resImport            : 2
+resInt               : 22 44 46 48
+resMain              : 20
+resMath              : 25
+resMod               : 25
+resPackage           : 
+resPrintf            : 43 44 45 46
+resReturn            : 17
+resVar               : 3 4
+
+Nonterminals, with rules where they appear
+
+acceso               : 16
+arreglo              : 
+etiqueta             : 11
+evaluacion           : 13
+function             : 9
+import               : 
+imprimir             : 14
+init                 : 0
+instriccion          : 
+instruccion          : 7 8
+ir                   : 12
+listaInstrucciones   : 1 7
+listaVariable        : 4 5
+llamar               : 15
+operador             : 24 42
+temporal             : 10
+tipo                 : 21 22 23 24 24 25 25 26 42 42 43 44 45 46 48 48 49 49
+variable             : 
+
+Parsing method: LALR
+
+state 0
+
+    (0) S' -> . init
+    (1) init -> . listaInstrucciones
+    (7) listaInstrucciones -> . listaInstrucciones instruccion
+    (8) listaInstrucciones -> . instruccion
+    (9) instruccion -> . function
+    (10) instruccion -> . temporal PUNTOCOMA
+    (11) instruccion -> . etiqueta
+    (12) instruccion -> . ir PUNTOCOMA
+    (13) instruccion -> . evaluacion
+    (14) instruccion -> . imprimir PUNTOCOMA
+    (15) instruccion -> . llamar PUNTOCOMA
+    (16) instruccion -> . acceso PUNTOCOMA
+    (17) instruccion -> . resReturn PUNTOCOMA
+    (19) function -> . resFunc IDENTIFICADOR PARENTESISA PARENTESISC LLAVEA
+    (20) function -> . resFunc resMain PARENTESISA PARENTESISC LLAVEA
+    (21) temporal -> . IDENTIFICADOR IGUAL tipo
+    (22) temporal -> . IDENTIFICADOR IGUAL IDENTIFICADOR CORCHETEA resInt PARENTESISA tipo PARENTESISC CORCHETEC
+    (23) temporal -> . IDENTIFICADOR IGUAL IDENTIFICADOR CORCHETEA tipo CORCHETEC
+    (24) temporal -> . IDENTIFICADOR IGUAL tipo operador tipo
+    (25) temporal -> . IDENTIFICADOR IGUAL resMath PUNTO resMod PARENTESISA tipo COMA tipo PARENTESISC
+    (26) temporal -> . IDENTIFICADOR IGUAL RESTA tipo
+    (40) etiqueta -> . IDENTIFICADOR DOSPUNTOS
+    (41) ir -> . resGoto IDENTIFICADOR
+    (42) evaluacion -> . resIf PARENTESISA tipo operador tipo PARENTESISC LLAVEA resGoto IDENTIFICADOR PUNTOCOMA LLAVEC
+    (43) imprimir -> . resFmt PUNTO resPrintf PARENTESISA CADENA COMA tipo PARENTESISC
+    (44) imprimir -> . resFmt PUNTO resPrintf PARENTESISA CADENA COMA IDENTIFICADOR CORCHETEA resInt PARENTESISA tipo PARENTESISC CORCHETEC PARENTESISC
+    (45) imprimir -> . resFmt PUNTO resPrintf PARENTESISA CADENA COMA IDENTIFICADOR CORCHETEA tipo CORCHETEC PARENTESISC
+    (46) imprimir -> . resFmt PUNTO resPrintf PARENTESISA CADENA COMA resInt PARENTESISA tipo PARENTESISC PARENTESISC
+    (47) llamar -> . IDENTIFICADOR PARENTESISA PARENTESISC
+    (48) acceso -> . IDENTIFICADOR CORCHETEA resInt PARENTESISA tipo PARENTESISC CORCHETEC IGUAL tipo
+    (49) acceso -> . IDENTIFICADOR CORCHETEA tipo CORCHETEC IGUAL tipo
+
+    resReturn       shift and go to state 12
+    resFunc         shift and go to state 13
+    IDENTIFICADOR   shift and go to state 14
+    resGoto         shift and go to state 15
+    resIf           shift and go to state 16
+    resFmt          shift and go to state 17
+
+    init                           shift and go to state 1
+    listaInstrucciones             shift and go to state 2
+    instruccion                    shift and go to state 3
+    function                       shift and go to state 4
+    temporal                       shift and go to state 5
+    etiqueta                       shift and go to state 6
+    ir                             shift and go to state 7
+    evaluacion                     shift and go to state 8
+    imprimir                       shift and go to state 9
+    llamar                         shift and go to state 10
+    acceso                         shift and go to state 11
+
+state 1
+
+    (0) S' -> init .
+
+
+
+state 2
+
+    (1) init -> listaInstrucciones .
+    (7) listaInstrucciones -> listaInstrucciones . instruccion
+    (9) instruccion -> . function
+    (10) instruccion -> . temporal PUNTOCOMA
+    (11) instruccion -> . etiqueta
+    (12) instruccion -> . ir PUNTOCOMA
+    (13) instruccion -> . evaluacion
+    (14) instruccion -> . imprimir PUNTOCOMA
+    (15) instruccion -> . llamar PUNTOCOMA
+    (16) instruccion -> . acceso PUNTOCOMA
+    (17) instruccion -> . resReturn PUNTOCOMA
+    (19) function -> . resFunc IDENTIFICADOR PARENTESISA PARENTESISC LLAVEA
+    (20) function -> . resFunc resMain PARENTESISA PARENTESISC LLAVEA
+    (21) temporal -> . IDENTIFICADOR IGUAL tipo
+    (22) temporal -> . IDENTIFICADOR IGUAL IDENTIFICADOR CORCHETEA resInt PARENTESISA tipo PARENTESISC CORCHETEC
+    (23) temporal -> . IDENTIFICADOR IGUAL IDENTIFICADOR CORCHETEA tipo CORCHETEC
+    (24) temporal -> . IDENTIFICADOR IGUAL tipo operador tipo
+    (25) temporal -> . IDENTIFICADOR IGUAL resMath PUNTO resMod PARENTESISA tipo COMA tipo PARENTESISC
+    (26) temporal -> . IDENTIFICADOR IGUAL RESTA tipo
+    (40) etiqueta -> . IDENTIFICADOR DOSPUNTOS
+    (41) ir -> . resGoto IDENTIFICADOR
+    (42) evaluacion -> . resIf PARENTESISA tipo operador tipo PARENTESISC LLAVEA resGoto IDENTIFICADOR PUNTOCOMA LLAVEC
+    (43) imprimir -> . resFmt PUNTO resPrintf PARENTESISA CADENA COMA tipo PARENTESISC
+    (44) imprimir -> . resFmt PUNTO resPrintf PARENTESISA CADENA COMA IDENTIFICADOR CORCHETEA resInt PARENTESISA tipo PARENTESISC CORCHETEC PARENTESISC
+    (45) imprimir -> . resFmt PUNTO resPrintf PARENTESISA CADENA COMA IDENTIFICADOR CORCHETEA tipo CORCHETEC PARENTESISC
+    (46) imprimir -> . resFmt PUNTO resPrintf PARENTESISA CADENA COMA resInt PARENTESISA tipo PARENTESISC PARENTESISC
+    (47) llamar -> . IDENTIFICADOR PARENTESISA PARENTESISC
+    (48) acceso -> . IDENTIFICADOR CORCHETEA resInt PARENTESISA tipo PARENTESISC CORCHETEC IGUAL tipo
+    (49) acceso -> . IDENTIFICADOR CORCHETEA tipo CORCHETEC IGUAL tipo
+
+    $end            reduce using rule 1 (init -> listaInstrucciones .)
+    resReturn       shift and go to state 12
+    resFunc         shift and go to state 13
+    IDENTIFICADOR   shift and go to state 14
+    resGoto         shift and go to state 15
+    resIf           shift and go to state 16
+    resFmt          shift and go to state 17
+
+    instruccion                    shift and go to state 18
+    function                       shift and go to state 4
+    temporal                       shift and go to state 5
+    etiqueta                       shift and go to state 6
+    ir                             shift and go to state 7
+    evaluacion                     shift and go to state 8
+    imprimir                       shift and go to state 9
+    llamar                         shift and go to state 10
+    acceso                         shift and go to state 11
+
+state 3
+
+    (8) listaInstrucciones -> instruccion .
+
+    resReturn       reduce using rule 8 (listaInstrucciones -> instruccion .)
+    resFunc         reduce using rule 8 (listaInstrucciones -> instruccion .)
+    IDENTIFICADOR   reduce using rule 8 (listaInstrucciones -> instruccion .)
+    resGoto         reduce using rule 8 (listaInstrucciones -> instruccion .)
+    resIf           reduce using rule 8 (listaInstrucciones -> instruccion .)
+    resFmt          reduce using rule 8 (listaInstrucciones -> instruccion .)
+    $end            reduce using rule 8 (listaInstrucciones -> instruccion .)
+
+
+state 4
+
+    (9) instruccion -> function .
+
+    resReturn       reduce using rule 9 (instruccion -> function .)
+    resFunc         reduce using rule 9 (instruccion -> function .)
+    IDENTIFICADOR   reduce using rule 9 (instruccion -> function .)
+    resGoto         reduce using rule 9 (instruccion -> function .)
+    resIf           reduce using rule 9 (instruccion -> function .)
+    resFmt          reduce using rule 9 (instruccion -> function .)
+    $end            reduce using rule 9 (instruccion -> function .)
+
+
+state 5
+
+    (10) instruccion -> temporal . PUNTOCOMA
+
+    PUNTOCOMA       shift and go to state 19
+
+
+state 6
+
+    (11) instruccion -> etiqueta .
+
+    resReturn       reduce using rule 11 (instruccion -> etiqueta .)
+    resFunc         reduce using rule 11 (instruccion -> etiqueta .)
+    IDENTIFICADOR   reduce using rule 11 (instruccion -> etiqueta .)
+    resGoto         reduce using rule 11 (instruccion -> etiqueta .)
+    resIf           reduce using rule 11 (instruccion -> etiqueta .)
+    resFmt          reduce using rule 11 (instruccion -> etiqueta .)
+    $end            reduce using rule 11 (instruccion -> etiqueta .)
+
+
+state 7
+
+    (12) instruccion -> ir . PUNTOCOMA
+
+    PUNTOCOMA       shift and go to state 20
+
+
+state 8
+
+    (13) instruccion -> evaluacion .
+
+    resReturn       reduce using rule 13 (instruccion -> evaluacion .)
+    resFunc         reduce using rule 13 (instruccion -> evaluacion .)
+    IDENTIFICADOR   reduce using rule 13 (instruccion -> evaluacion .)
+    resGoto         reduce using rule 13 (instruccion -> evaluacion .)
+    resIf           reduce using rule 13 (instruccion -> evaluacion .)
+    resFmt          reduce using rule 13 (instruccion -> evaluacion .)
+    $end            reduce using rule 13 (instruccion -> evaluacion .)
+
+
+state 9
+
+    (14) instruccion -> imprimir . PUNTOCOMA
+
+    PUNTOCOMA       shift and go to state 21
+
+
+state 10
+
+    (15) instruccion -> llamar . PUNTOCOMA
+
+    PUNTOCOMA       shift and go to state 22
+
+
+state 11
+
+    (16) instruccion -> acceso . PUNTOCOMA
+
+    PUNTOCOMA       shift and go to state 23
+
+
+state 12
+
+    (17) instruccion -> resReturn . PUNTOCOMA
+
+    PUNTOCOMA       shift and go to state 24
+
+
+state 13
+
+    (19) function -> resFunc . IDENTIFICADOR PARENTESISA PARENTESISC LLAVEA
+    (20) function -> resFunc . resMain PARENTESISA PARENTESISC LLAVEA
+
+    IDENTIFICADOR   shift and go to state 25
+    resMain         shift and go to state 26
+
+
+state 14
+
+    (21) temporal -> IDENTIFICADOR . IGUAL tipo
+    (22) temporal -> IDENTIFICADOR . IGUAL IDENTIFICADOR CORCHETEA resInt PARENTESISA tipo PARENTESISC CORCHETEC
+    (23) temporal -> IDENTIFICADOR . IGUAL IDENTIFICADOR CORCHETEA tipo CORCHETEC
+    (24) temporal -> IDENTIFICADOR . IGUAL tipo operador tipo
+    (25) temporal -> IDENTIFICADOR . IGUAL resMath PUNTO resMod PARENTESISA tipo COMA tipo PARENTESISC
+    (26) temporal -> IDENTIFICADOR . IGUAL RESTA tipo
+    (40) etiqueta -> IDENTIFICADOR . DOSPUNTOS
+    (47) llamar -> IDENTIFICADOR . PARENTESISA PARENTESISC
+    (48) acceso -> IDENTIFICADOR . CORCHETEA resInt PARENTESISA tipo PARENTESISC CORCHETEC IGUAL tipo
+    (49) acceso -> IDENTIFICADOR . CORCHETEA tipo CORCHETEC IGUAL tipo
+
+    IGUAL           shift and go to state 27
+    DOSPUNTOS       shift and go to state 30
+    PARENTESISA     shift and go to state 29
+    CORCHETEA       shift and go to state 28
+
+
+state 15
+
+    (41) ir -> resGoto . IDENTIFICADOR
+
+    IDENTIFICADOR   shift and go to state 31
+
+
+state 16
+
+    (42) evaluacion -> resIf . PARENTESISA tipo operador tipo PARENTESISC LLAVEA resGoto IDENTIFICADOR PUNTOCOMA LLAVEC
+
+    PARENTESISA     shift and go to state 32
+
+
+state 17
+
+    (43) imprimir -> resFmt . PUNTO resPrintf PARENTESISA CADENA COMA tipo PARENTESISC
+    (44) imprimir -> resFmt . PUNTO resPrintf PARENTESISA CADENA COMA IDENTIFICADOR CORCHETEA resInt PARENTESISA tipo PARENTESISC CORCHETEC PARENTESISC
+    (45) imprimir -> resFmt . PUNTO resPrintf PARENTESISA CADENA COMA IDENTIFICADOR CORCHETEA tipo CORCHETEC PARENTESISC
+    (46) imprimir -> resFmt . PUNTO resPrintf PARENTESISA CADENA COMA resInt PARENTESISA tipo PARENTESISC PARENTESISC
+
+    PUNTO           shift and go to state 33
+
+
+state 18
+
+    (7) listaInstrucciones -> listaInstrucciones instruccion .
+
+    resReturn       reduce using rule 7 (listaInstrucciones -> listaInstrucciones instruccion .)
+    resFunc         reduce using rule 7 (listaInstrucciones -> listaInstrucciones instruccion .)
+    IDENTIFICADOR   reduce using rule 7 (listaInstrucciones -> listaInstrucciones instruccion .)
+    resGoto         reduce using rule 7 (listaInstrucciones -> listaInstrucciones instruccion .)
+    resIf           reduce using rule 7 (listaInstrucciones -> listaInstrucciones instruccion .)
+    resFmt          reduce using rule 7 (listaInstrucciones -> listaInstrucciones instruccion .)
+    $end            reduce using rule 7 (listaInstrucciones -> listaInstrucciones instruccion .)
+
+
+state 19
+
+    (10) instruccion -> temporal PUNTOCOMA .
+
+    resReturn       reduce using rule 10 (instruccion -> temporal PUNTOCOMA .)
+    resFunc         reduce using rule 10 (instruccion -> temporal PUNTOCOMA .)
+    IDENTIFICADOR   reduce using rule 10 (instruccion -> temporal PUNTOCOMA .)
+    resGoto         reduce using rule 10 (instruccion -> temporal PUNTOCOMA .)
+    resIf           reduce using rule 10 (instruccion -> temporal PUNTOCOMA .)
+    resFmt          reduce using rule 10 (instruccion -> temporal PUNTOCOMA .)
+    $end            reduce using rule 10 (instruccion -> temporal PUNTOCOMA .)
+
+
+state 20
+
+    (12) instruccion -> ir PUNTOCOMA .
+
+    resReturn       reduce using rule 12 (instruccion -> ir PUNTOCOMA .)
+    resFunc         reduce using rule 12 (instruccion -> ir PUNTOCOMA .)
+    IDENTIFICADOR   reduce using rule 12 (instruccion -> ir PUNTOCOMA .)
+    resGoto         reduce using rule 12 (instruccion -> ir PUNTOCOMA .)
+    resIf           reduce using rule 12 (instruccion -> ir PUNTOCOMA .)
+    resFmt          reduce using rule 12 (instruccion -> ir PUNTOCOMA .)
+    $end            reduce using rule 12 (instruccion -> ir PUNTOCOMA .)
+
+
+state 21
+
+    (14) instruccion -> imprimir PUNTOCOMA .
+
+    resReturn       reduce using rule 14 (instruccion -> imprimir PUNTOCOMA .)
+    resFunc         reduce using rule 14 (instruccion -> imprimir PUNTOCOMA .)
+    IDENTIFICADOR   reduce using rule 14 (instruccion -> imprimir PUNTOCOMA .)
+    resGoto         reduce using rule 14 (instruccion -> imprimir PUNTOCOMA .)
+    resIf           reduce using rule 14 (instruccion -> imprimir PUNTOCOMA .)
+    resFmt          reduce using rule 14 (instruccion -> imprimir PUNTOCOMA .)
+    $end            reduce using rule 14 (instruccion -> imprimir PUNTOCOMA .)
+
+
+state 22
+
+    (15) instruccion -> llamar PUNTOCOMA .
+
+    resReturn       reduce using rule 15 (instruccion -> llamar PUNTOCOMA .)
+    resFunc         reduce using rule 15 (instruccion -> llamar PUNTOCOMA .)
+    IDENTIFICADOR   reduce using rule 15 (instruccion -> llamar PUNTOCOMA .)
+    resGoto         reduce using rule 15 (instruccion -> llamar PUNTOCOMA .)
+    resIf           reduce using rule 15 (instruccion -> llamar PUNTOCOMA .)
+    resFmt          reduce using rule 15 (instruccion -> llamar PUNTOCOMA .)
+    $end            reduce using rule 15 (instruccion -> llamar PUNTOCOMA .)
+
+
+state 23
+
+    (16) instruccion -> acceso PUNTOCOMA .
+
+    resReturn       reduce using rule 16 (instruccion -> acceso PUNTOCOMA .)
+    resFunc         reduce using rule 16 (instruccion -> acceso PUNTOCOMA .)
+    IDENTIFICADOR   reduce using rule 16 (instruccion -> acceso PUNTOCOMA .)
+    resGoto         reduce using rule 16 (instruccion -> acceso PUNTOCOMA .)
+    resIf           reduce using rule 16 (instruccion -> acceso PUNTOCOMA .)
+    resFmt          reduce using rule 16 (instruccion -> acceso PUNTOCOMA .)
+    $end            reduce using rule 16 (instruccion -> acceso PUNTOCOMA .)
+
+
+state 24
+
+    (17) instruccion -> resReturn PUNTOCOMA .
+
+    resReturn       reduce using rule 17 (instruccion -> resReturn PUNTOCOMA .)
+    resFunc         reduce using rule 17 (instruccion -> resReturn PUNTOCOMA .)
+    IDENTIFICADOR   reduce using rule 17 (instruccion -> resReturn PUNTOCOMA .)
+    resGoto         reduce using rule 17 (instruccion -> resReturn PUNTOCOMA .)
+    resIf           reduce using rule 17 (instruccion -> resReturn PUNTOCOMA .)
+    resFmt          reduce using rule 17 (instruccion -> resReturn PUNTOCOMA .)
+    $end            reduce using rule 17 (instruccion -> resReturn PUNTOCOMA .)
+
+
+state 25
+
+    (19) function -> resFunc IDENTIFICADOR . PARENTESISA PARENTESISC LLAVEA
+
+    PARENTESISA     shift and go to state 34
+
+
+state 26
+
+    (20) function -> resFunc resMain . PARENTESISA PARENTESISC LLAVEA
+
+    PARENTESISA     shift and go to state 35
+
+
+state 27
+
+    (21) temporal -> IDENTIFICADOR IGUAL . tipo
+    (22) temporal -> IDENTIFICADOR IGUAL . IDENTIFICADOR CORCHETEA resInt PARENTESISA tipo PARENTESISC CORCHETEC
+    (23) temporal -> IDENTIFICADOR IGUAL . IDENTIFICADOR CORCHETEA tipo CORCHETEC
+    (24) temporal -> IDENTIFICADOR IGUAL . tipo operador tipo
+    (25) temporal -> IDENTIFICADOR IGUAL . resMath PUNTO resMod PARENTESISA tipo COMA tipo PARENTESISC
+    (26) temporal -> IDENTIFICADOR IGUAL . RESTA tipo
+    (27) tipo -> . ENTERO
+    (28) tipo -> . FLOTANTE
+    (29) tipo -> . IDENTIFICADOR
+
+    IDENTIFICADOR   shift and go to state 36
+    resMath         shift and go to state 38
+    RESTA           shift and go to state 39
+    ENTERO          shift and go to state 40
+    FLOTANTE        shift and go to state 41
+
+    tipo                           shift and go to state 37
+
+state 28
+
+    (48) acceso -> IDENTIFICADOR CORCHETEA . resInt PARENTESISA tipo PARENTESISC CORCHETEC IGUAL tipo
+    (49) acceso -> IDENTIFICADOR CORCHETEA . tipo CORCHETEC IGUAL tipo
+    (27) tipo -> . ENTERO
+    (28) tipo -> . FLOTANTE
+    (29) tipo -> . IDENTIFICADOR
+
+    resInt          shift and go to state 43
+    ENTERO          shift and go to state 40
+    FLOTANTE        shift and go to state 41
+    IDENTIFICADOR   shift and go to state 42
+
+    tipo                           shift and go to state 44
+
+state 29
+
+    (47) llamar -> IDENTIFICADOR PARENTESISA . PARENTESISC
+
+    PARENTESISC     shift and go to state 45
+
+
+state 30
+
+    (40) etiqueta -> IDENTIFICADOR DOSPUNTOS .
+
+    resReturn       reduce using rule 40 (etiqueta -> IDENTIFICADOR DOSPUNTOS .)
+    resFunc         reduce using rule 40 (etiqueta -> IDENTIFICADOR DOSPUNTOS .)
+    IDENTIFICADOR   reduce using rule 40 (etiqueta -> IDENTIFICADOR DOSPUNTOS .)
+    resGoto         reduce using rule 40 (etiqueta -> IDENTIFICADOR DOSPUNTOS .)
+    resIf           reduce using rule 40 (etiqueta -> IDENTIFICADOR DOSPUNTOS .)
+    resFmt          reduce using rule 40 (etiqueta -> IDENTIFICADOR DOSPUNTOS .)
+    $end            reduce using rule 40 (etiqueta -> IDENTIFICADOR DOSPUNTOS .)
+
+
+state 31
+
+    (41) ir -> resGoto IDENTIFICADOR .
+
+    PUNTOCOMA       reduce using rule 41 (ir -> resGoto IDENTIFICADOR .)
+
+
+state 32
+
+    (42) evaluacion -> resIf PARENTESISA . tipo operador tipo PARENTESISC LLAVEA resGoto IDENTIFICADOR PUNTOCOMA LLAVEC
+    (27) tipo -> . ENTERO
+    (28) tipo -> . FLOTANTE
+    (29) tipo -> . IDENTIFICADOR
+
+    ENTERO          shift and go to state 40
+    FLOTANTE        shift and go to state 41
+    IDENTIFICADOR   shift and go to state 42
+
+    tipo                           shift and go to state 46
+
+state 33
+
+    (43) imprimir -> resFmt PUNTO . resPrintf PARENTESISA CADENA COMA tipo PARENTESISC
+    (44) imprimir -> resFmt PUNTO . resPrintf PARENTESISA CADENA COMA IDENTIFICADOR CORCHETEA resInt PARENTESISA tipo PARENTESISC CORCHETEC PARENTESISC
+    (45) imprimir -> resFmt PUNTO . resPrintf PARENTESISA CADENA COMA IDENTIFICADOR CORCHETEA tipo CORCHETEC PARENTESISC
+    (46) imprimir -> resFmt PUNTO . resPrintf PARENTESISA CADENA COMA resInt PARENTESISA tipo PARENTESISC PARENTESISC
+
+    resPrintf       shift and go to state 47
+
+
+state 34
+
+    (19) function -> resFunc IDENTIFICADOR PARENTESISA . PARENTESISC LLAVEA
+
+    PARENTESISC     shift and go to state 48
+
+
+state 35
+
+    (20) function -> resFunc resMain PARENTESISA . PARENTESISC LLAVEA
+
+    PARENTESISC     shift and go to state 49
+
+
+state 36
+
+    (22) temporal -> IDENTIFICADOR IGUAL IDENTIFICADOR . CORCHETEA resInt PARENTESISA tipo PARENTESISC CORCHETEC
+    (23) temporal -> IDENTIFICADOR IGUAL IDENTIFICADOR . CORCHETEA tipo CORCHETEC
+    (29) tipo -> IDENTIFICADOR .
+
+    CORCHETEA       shift and go to state 50
+    SUMA            reduce using rule 29 (tipo -> IDENTIFICADOR .)
+    RESTA           reduce using rule 29 (tipo -> IDENTIFICADOR .)
+    MULTIPLICACION  reduce using rule 29 (tipo -> IDENTIFICADOR .)
+    DIVISION        reduce using rule 29 (tipo -> IDENTIFICADOR .)
+    MAYOR           reduce using rule 29 (tipo -> IDENTIFICADOR .)
+    MENOR           reduce using rule 29 (tipo -> IDENTIFICADOR .)
+    MAYORIGUAL      reduce using rule 29 (tipo -> IDENTIFICADOR .)
+    MENORIGUAL      reduce using rule 29 (tipo -> IDENTIFICADOR .)
+    IGUALIGUAL      reduce using rule 29 (tipo -> IDENTIFICADOR .)
+    DIFERENTE       reduce using rule 29 (tipo -> IDENTIFICADOR .)
+    PUNTOCOMA       reduce using rule 29 (tipo -> IDENTIFICADOR .)
+
+
+state 37
+
+    (21) temporal -> IDENTIFICADOR IGUAL tipo .
+    (24) temporal -> IDENTIFICADOR IGUAL tipo . operador tipo
+    (30) operador -> . SUMA
+    (31) operador -> . RESTA
+    (32) operador -> . MULTIPLICACION
+    (33) operador -> . DIVISION
+    (34) operador -> . MAYOR
+    (35) operador -> . MENOR
+    (36) operador -> . MAYORIGUAL
+    (37) operador -> . MENORIGUAL
+    (38) operador -> . IGUALIGUAL
+    (39) operador -> . DIFERENTE
+
+    PUNTOCOMA       reduce using rule 21 (temporal -> IDENTIFICADOR IGUAL tipo .)
+    SUMA            shift and go to state 52
+    RESTA           shift and go to state 53
+    MULTIPLICACION  shift and go to state 54
+    DIVISION        shift and go to state 55
+    MAYOR           shift and go to state 56
+    MENOR           shift and go to state 57
+    MAYORIGUAL      shift and go to state 58
+    MENORIGUAL      shift and go to state 59
+    IGUALIGUAL      shift and go to state 60
+    DIFERENTE       shift and go to state 61
+
+    operador                       shift and go to state 51
+
+state 38
+
+    (25) temporal -> IDENTIFICADOR IGUAL resMath . PUNTO resMod PARENTESISA tipo COMA tipo PARENTESISC
+
+    PUNTO           shift and go to state 62
+
+
+state 39
+
+    (26) temporal -> IDENTIFICADOR IGUAL RESTA . tipo
+    (27) tipo -> . ENTERO
+    (28) tipo -> . FLOTANTE
+    (29) tipo -> . IDENTIFICADOR
+
+    ENTERO          shift and go to state 40
+    FLOTANTE        shift and go to state 41
+    IDENTIFICADOR   shift and go to state 42
+
+    tipo                           shift and go to state 63
+
+state 40
+
+    (27) tipo -> ENTERO .
+
+    SUMA            reduce using rule 27 (tipo -> ENTERO .)
+    RESTA           reduce using rule 27 (tipo -> ENTERO .)
+    MULTIPLICACION  reduce using rule 27 (tipo -> ENTERO .)
+    DIVISION        reduce using rule 27 (tipo -> ENTERO .)
+    MAYOR           reduce using rule 27 (tipo -> ENTERO .)
+    MENOR           reduce using rule 27 (tipo -> ENTERO .)
+    MAYORIGUAL      reduce using rule 27 (tipo -> ENTERO .)
+    MENORIGUAL      reduce using rule 27 (tipo -> ENTERO .)
+    IGUALIGUAL      reduce using rule 27 (tipo -> ENTERO .)
+    DIFERENTE       reduce using rule 27 (tipo -> ENTERO .)
+    PUNTOCOMA       reduce using rule 27 (tipo -> ENTERO .)
+    CORCHETEC       reduce using rule 27 (tipo -> ENTERO .)
+    PARENTESISC     reduce using rule 27 (tipo -> ENTERO .)
+    COMA            reduce using rule 27 (tipo -> ENTERO .)
+
+
+state 41
+
+    (28) tipo -> FLOTANTE .
+
+    SUMA            reduce using rule 28 (tipo -> FLOTANTE .)
+    RESTA           reduce using rule 28 (tipo -> FLOTANTE .)
+    MULTIPLICACION  reduce using rule 28 (tipo -> FLOTANTE .)
+    DIVISION        reduce using rule 28 (tipo -> FLOTANTE .)
+    MAYOR           reduce using rule 28 (tipo -> FLOTANTE .)
+    MENOR           reduce using rule 28 (tipo -> FLOTANTE .)
+    MAYORIGUAL      reduce using rule 28 (tipo -> FLOTANTE .)
+    MENORIGUAL      reduce using rule 28 (tipo -> FLOTANTE .)
+    IGUALIGUAL      reduce using rule 28 (tipo -> FLOTANTE .)
+    DIFERENTE       reduce using rule 28 (tipo -> FLOTANTE .)
+    PUNTOCOMA       reduce using rule 28 (tipo -> FLOTANTE .)
+    CORCHETEC       reduce using rule 28 (tipo -> FLOTANTE .)
+    PARENTESISC     reduce using rule 28 (tipo -> FLOTANTE .)
+    COMA            reduce using rule 28 (tipo -> FLOTANTE .)
+
+
+state 42
+
+    (29) tipo -> IDENTIFICADOR .
+
+    CORCHETEC       reduce using rule 29 (tipo -> IDENTIFICADOR .)
+    SUMA            reduce using rule 29 (tipo -> IDENTIFICADOR .)
+    RESTA           reduce using rule 29 (tipo -> IDENTIFICADOR .)
+    MULTIPLICACION  reduce using rule 29 (tipo -> IDENTIFICADOR .)
+    DIVISION        reduce using rule 29 (tipo -> IDENTIFICADOR .)
+    MAYOR           reduce using rule 29 (tipo -> IDENTIFICADOR .)
+    MENOR           reduce using rule 29 (tipo -> IDENTIFICADOR .)
+    MAYORIGUAL      reduce using rule 29 (tipo -> IDENTIFICADOR .)
+    MENORIGUAL      reduce using rule 29 (tipo -> IDENTIFICADOR .)
+    IGUALIGUAL      reduce using rule 29 (tipo -> IDENTIFICADOR .)
+    DIFERENTE       reduce using rule 29 (tipo -> IDENTIFICADOR .)
+    PUNTOCOMA       reduce using rule 29 (tipo -> IDENTIFICADOR .)
+    PARENTESISC     reduce using rule 29 (tipo -> IDENTIFICADOR .)
+    COMA            reduce using rule 29 (tipo -> IDENTIFICADOR .)
+
+
+state 43
+
+    (48) acceso -> IDENTIFICADOR CORCHETEA resInt . PARENTESISA tipo PARENTESISC CORCHETEC IGUAL tipo
+
+    PARENTESISA     shift and go to state 64
+
+
+state 44
+
+    (49) acceso -> IDENTIFICADOR CORCHETEA tipo . CORCHETEC IGUAL tipo
+
+    CORCHETEC       shift and go to state 65
+
+
+state 45
+
+    (47) llamar -> IDENTIFICADOR PARENTESISA PARENTESISC .
+
+    PUNTOCOMA       reduce using rule 47 (llamar -> IDENTIFICADOR PARENTESISA PARENTESISC .)
+
+
+state 46
+
+    (42) evaluacion -> resIf PARENTESISA tipo . operador tipo PARENTESISC LLAVEA resGoto IDENTIFICADOR PUNTOCOMA LLAVEC
+    (30) operador -> . SUMA
+    (31) operador -> . RESTA
+    (32) operador -> . MULTIPLICACION
+    (33) operador -> . DIVISION
+    (34) operador -> . MAYOR
+    (35) operador -> . MENOR
+    (36) operador -> . MAYORIGUAL
+    (37) operador -> . MENORIGUAL
+    (38) operador -> . IGUALIGUAL
+    (39) operador -> . DIFERENTE
+
+    SUMA            shift and go to state 52
+    RESTA           shift and go to state 53
+    MULTIPLICACION  shift and go to state 54
+    DIVISION        shift and go to state 55
+    MAYOR           shift and go to state 56
+    MENOR           shift and go to state 57
+    MAYORIGUAL      shift and go to state 58
+    MENORIGUAL      shift and go to state 59
+    IGUALIGUAL      shift and go to state 60
+    DIFERENTE       shift and go to state 61
+
+    operador                       shift and go to state 66
+
+state 47
+
+    (43) imprimir -> resFmt PUNTO resPrintf . PARENTESISA CADENA COMA tipo PARENTESISC
+    (44) imprimir -> resFmt PUNTO resPrintf . PARENTESISA CADENA COMA IDENTIFICADOR CORCHETEA resInt PARENTESISA tipo PARENTESISC CORCHETEC PARENTESISC
+    (45) imprimir -> resFmt PUNTO resPrintf . PARENTESISA CADENA COMA IDENTIFICADOR CORCHETEA tipo CORCHETEC PARENTESISC
+    (46) imprimir -> resFmt PUNTO resPrintf . PARENTESISA CADENA COMA resInt PARENTESISA tipo PARENTESISC PARENTESISC
+
+    PARENTESISA     shift and go to state 67
+
+
+state 48
+
+    (19) function -> resFunc IDENTIFICADOR PARENTESISA PARENTESISC . LLAVEA
+
+    LLAVEA          shift and go to state 68
+
+
+state 49
+
+    (20) function -> resFunc resMain PARENTESISA PARENTESISC . LLAVEA
+
+    LLAVEA          shift and go to state 69
+
+
+state 50
+
+    (22) temporal -> IDENTIFICADOR IGUAL IDENTIFICADOR CORCHETEA . resInt PARENTESISA tipo PARENTESISC CORCHETEC
+    (23) temporal -> IDENTIFICADOR IGUAL IDENTIFICADOR CORCHETEA . tipo CORCHETEC
+    (27) tipo -> . ENTERO
+    (28) tipo -> . FLOTANTE
+    (29) tipo -> . IDENTIFICADOR
+
+    resInt          shift and go to state 70
+    ENTERO          shift and go to state 40
+    FLOTANTE        shift and go to state 41
+    IDENTIFICADOR   shift and go to state 42
+
+    tipo                           shift and go to state 71
+
+state 51
+
+    (24) temporal -> IDENTIFICADOR IGUAL tipo operador . tipo
+    (27) tipo -> . ENTERO
+    (28) tipo -> . FLOTANTE
+    (29) tipo -> . IDENTIFICADOR
+
+    ENTERO          shift and go to state 40
+    FLOTANTE        shift and go to state 41
+    IDENTIFICADOR   shift and go to state 42
+
+    tipo                           shift and go to state 72
+
+state 52
+
+    (30) operador -> SUMA .
+
+    ENTERO          reduce using rule 30 (operador -> SUMA .)
+    FLOTANTE        reduce using rule 30 (operador -> SUMA .)
+    IDENTIFICADOR   reduce using rule 30 (operador -> SUMA .)
+
+
+state 53
+
+    (31) operador -> RESTA .
+
+    ENTERO          reduce using rule 31 (operador -> RESTA .)
+    FLOTANTE        reduce using rule 31 (operador -> RESTA .)
+    IDENTIFICADOR   reduce using rule 31 (operador -> RESTA .)
+
+
+state 54
+
+    (32) operador -> MULTIPLICACION .
+
+    ENTERO          reduce using rule 32 (operador -> MULTIPLICACION .)
+    FLOTANTE        reduce using rule 32 (operador -> MULTIPLICACION .)
+    IDENTIFICADOR   reduce using rule 32 (operador -> MULTIPLICACION .)
+
+
+state 55
+
+    (33) operador -> DIVISION .
+
+    ENTERO          reduce using rule 33 (operador -> DIVISION .)
+    FLOTANTE        reduce using rule 33 (operador -> DIVISION .)
+    IDENTIFICADOR   reduce using rule 33 (operador -> DIVISION .)
+
+
+state 56
+
+    (34) operador -> MAYOR .
+
+    ENTERO          reduce using rule 34 (operador -> MAYOR .)
+    FLOTANTE        reduce using rule 34 (operador -> MAYOR .)
+    IDENTIFICADOR   reduce using rule 34 (operador -> MAYOR .)
+
+
+state 57
+
+    (35) operador -> MENOR .
+
+    ENTERO          reduce using rule 35 (operador -> MENOR .)
+    FLOTANTE        reduce using rule 35 (operador -> MENOR .)
+    IDENTIFICADOR   reduce using rule 35 (operador -> MENOR .)
+
+
+state 58
+
+    (36) operador -> MAYORIGUAL .
+
+    ENTERO          reduce using rule 36 (operador -> MAYORIGUAL .)
+    FLOTANTE        reduce using rule 36 (operador -> MAYORIGUAL .)
+    IDENTIFICADOR   reduce using rule 36 (operador -> MAYORIGUAL .)
+
+
+state 59
+
+    (37) operador -> MENORIGUAL .
+
+    ENTERO          reduce using rule 37 (operador -> MENORIGUAL .)
+    FLOTANTE        reduce using rule 37 (operador -> MENORIGUAL .)
+    IDENTIFICADOR   reduce using rule 37 (operador -> MENORIGUAL .)
+
+
+state 60
+
+    (38) operador -> IGUALIGUAL .
+
+    ENTERO          reduce using rule 38 (operador -> IGUALIGUAL .)
+    FLOTANTE        reduce using rule 38 (operador -> IGUALIGUAL .)
+    IDENTIFICADOR   reduce using rule 38 (operador -> IGUALIGUAL .)
+
+
+state 61
+
+    (39) operador -> DIFERENTE .
+
+    ENTERO          reduce using rule 39 (operador -> DIFERENTE .)
+    FLOTANTE        reduce using rule 39 (operador -> DIFERENTE .)
+    IDENTIFICADOR   reduce using rule 39 (operador -> DIFERENTE .)
+
+
+state 62
+
+    (25) temporal -> IDENTIFICADOR IGUAL resMath PUNTO . resMod PARENTESISA tipo COMA tipo PARENTESISC
+
+    resMod          shift and go to state 73
+
+
+state 63
+
+    (26) temporal -> IDENTIFICADOR IGUAL RESTA tipo .
+
+    PUNTOCOMA       reduce using rule 26 (temporal -> IDENTIFICADOR IGUAL RESTA tipo .)
+
+
+state 64
+
+    (48) acceso -> IDENTIFICADOR CORCHETEA resInt PARENTESISA . tipo PARENTESISC CORCHETEC IGUAL tipo
+    (27) tipo -> . ENTERO
+    (28) tipo -> . FLOTANTE
+    (29) tipo -> . IDENTIFICADOR
+
+    ENTERO          shift and go to state 40
+    FLOTANTE        shift and go to state 41
+    IDENTIFICADOR   shift and go to state 42
+
+    tipo                           shift and go to state 74
+
+state 65
+
+    (49) acceso -> IDENTIFICADOR CORCHETEA tipo CORCHETEC . IGUAL tipo
+
+    IGUAL           shift and go to state 75
+
+
+state 66
+
+    (42) evaluacion -> resIf PARENTESISA tipo operador . tipo PARENTESISC LLAVEA resGoto IDENTIFICADOR PUNTOCOMA LLAVEC
+    (27) tipo -> . ENTERO
+    (28) tipo -> . FLOTANTE
+    (29) tipo -> . IDENTIFICADOR
+
+    ENTERO          shift and go to state 40
+    FLOTANTE        shift and go to state 41
+    IDENTIFICADOR   shift and go to state 42
+
+    tipo                           shift and go to state 76
+
+state 67
+
+    (43) imprimir -> resFmt PUNTO resPrintf PARENTESISA . CADENA COMA tipo PARENTESISC
+    (44) imprimir -> resFmt PUNTO resPrintf PARENTESISA . CADENA COMA IDENTIFICADOR CORCHETEA resInt PARENTESISA tipo PARENTESISC CORCHETEC PARENTESISC
+    (45) imprimir -> resFmt PUNTO resPrintf PARENTESISA . CADENA COMA IDENTIFICADOR CORCHETEA tipo CORCHETEC PARENTESISC
+    (46) imprimir -> resFmt PUNTO resPrintf PARENTESISA . CADENA COMA resInt PARENTESISA tipo PARENTESISC PARENTESISC
+
+    CADENA          shift and go to state 77
+
+
+state 68
+
+    (19) function -> resFunc IDENTIFICADOR PARENTESISA PARENTESISC LLAVEA .
+
+    resReturn       reduce using rule 19 (function -> resFunc IDENTIFICADOR PARENTESISA PARENTESISC LLAVEA .)
+    resFunc         reduce using rule 19 (function -> resFunc IDENTIFICADOR PARENTESISA PARENTESISC LLAVEA .)
+    IDENTIFICADOR   reduce using rule 19 (function -> resFunc IDENTIFICADOR PARENTESISA PARENTESISC LLAVEA .)
+    resGoto         reduce using rule 19 (function -> resFunc IDENTIFICADOR PARENTESISA PARENTESISC LLAVEA .)
+    resIf           reduce using rule 19 (function -> resFunc IDENTIFICADOR PARENTESISA PARENTESISC LLAVEA .)
+    resFmt          reduce using rule 19 (function -> resFunc IDENTIFICADOR PARENTESISA PARENTESISC LLAVEA .)
+    $end            reduce using rule 19 (function -> resFunc IDENTIFICADOR PARENTESISA PARENTESISC LLAVEA .)
+
+
+state 69
+
+    (20) function -> resFunc resMain PARENTESISA PARENTESISC LLAVEA .
+
+    resReturn       reduce using rule 20 (function -> resFunc resMain PARENTESISA PARENTESISC LLAVEA .)
+    resFunc         reduce using rule 20 (function -> resFunc resMain PARENTESISA PARENTESISC LLAVEA .)
+    IDENTIFICADOR   reduce using rule 20 (function -> resFunc resMain PARENTESISA PARENTESISC LLAVEA .)
+    resGoto         reduce using rule 20 (function -> resFunc resMain PARENTESISA PARENTESISC LLAVEA .)
+    resIf           reduce using rule 20 (function -> resFunc resMain PARENTESISA PARENTESISC LLAVEA .)
+    resFmt          reduce using rule 20 (function -> resFunc resMain PARENTESISA PARENTESISC LLAVEA .)
+    $end            reduce using rule 20 (function -> resFunc resMain PARENTESISA PARENTESISC LLAVEA .)
+
+
+state 70
+
+    (22) temporal -> IDENTIFICADOR IGUAL IDENTIFICADOR CORCHETEA resInt . PARENTESISA tipo PARENTESISC CORCHETEC
+
+    PARENTESISA     shift and go to state 78
+
+
+state 71
+
+    (23) temporal -> IDENTIFICADOR IGUAL IDENTIFICADOR CORCHETEA tipo . CORCHETEC
+
+    CORCHETEC       shift and go to state 79
+
+
+state 72
+
+    (24) temporal -> IDENTIFICADOR IGUAL tipo operador tipo .
+
+    PUNTOCOMA       reduce using rule 24 (temporal -> IDENTIFICADOR IGUAL tipo operador tipo .)
+
+
+state 73
+
+    (25) temporal -> IDENTIFICADOR IGUAL resMath PUNTO resMod . PARENTESISA tipo COMA tipo PARENTESISC
+
+    PARENTESISA     shift and go to state 80
+
+
+state 74
+
+    (48) acceso -> IDENTIFICADOR CORCHETEA resInt PARENTESISA tipo . PARENTESISC CORCHETEC IGUAL tipo
+
+    PARENTESISC     shift and go to state 81
+
+
+state 75
+
+    (49) acceso -> IDENTIFICADOR CORCHETEA tipo CORCHETEC IGUAL . tipo
+    (27) tipo -> . ENTERO
+    (28) tipo -> . FLOTANTE
+    (29) tipo -> . IDENTIFICADOR
+
+    ENTERO          shift and go to state 40
+    FLOTANTE        shift and go to state 41
+    IDENTIFICADOR   shift and go to state 42
+
+    tipo                           shift and go to state 82
+
+state 76
+
+    (42) evaluacion -> resIf PARENTESISA tipo operador tipo . PARENTESISC LLAVEA resGoto IDENTIFICADOR PUNTOCOMA LLAVEC
+
+    PARENTESISC     shift and go to state 83
+
+
+state 77
+
+    (43) imprimir -> resFmt PUNTO resPrintf PARENTESISA CADENA . COMA tipo PARENTESISC
+    (44) imprimir -> resFmt PUNTO resPrintf PARENTESISA CADENA . COMA IDENTIFICADOR CORCHETEA resInt PARENTESISA tipo PARENTESISC CORCHETEC PARENTESISC
+    (45) imprimir -> resFmt PUNTO resPrintf PARENTESISA CADENA . COMA IDENTIFICADOR CORCHETEA tipo CORCHETEC PARENTESISC
+    (46) imprimir -> resFmt PUNTO resPrintf PARENTESISA CADENA . COMA resInt PARENTESISA tipo PARENTESISC PARENTESISC
+
+    COMA            shift and go to state 84
+
+
+state 78
+
+    (22) temporal -> IDENTIFICADOR IGUAL IDENTIFICADOR CORCHETEA resInt PARENTESISA . tipo PARENTESISC CORCHETEC
+    (27) tipo -> . ENTERO
+    (28) tipo -> . FLOTANTE
+    (29) tipo -> . IDENTIFICADOR
+
+    ENTERO          shift and go to state 40
+    FLOTANTE        shift and go to state 41
+    IDENTIFICADOR   shift and go to state 42
+
+    tipo                           shift and go to state 85
+
+state 79
+
+    (23) temporal -> IDENTIFICADOR IGUAL IDENTIFICADOR CORCHETEA tipo CORCHETEC .
+
+    PUNTOCOMA       reduce using rule 23 (temporal -> IDENTIFICADOR IGUAL IDENTIFICADOR CORCHETEA tipo CORCHETEC .)
+
+
+state 80
+
+    (25) temporal -> IDENTIFICADOR IGUAL resMath PUNTO resMod PARENTESISA . tipo COMA tipo PARENTESISC
+    (27) tipo -> . ENTERO
+    (28) tipo -> . FLOTANTE
+    (29) tipo -> . IDENTIFICADOR
+
+    ENTERO          shift and go to state 40
+    FLOTANTE        shift and go to state 41
+    IDENTIFICADOR   shift and go to state 42
+
+    tipo                           shift and go to state 86
+
+state 81
+
+    (48) acceso -> IDENTIFICADOR CORCHETEA resInt PARENTESISA tipo PARENTESISC . CORCHETEC IGUAL tipo
+
+    CORCHETEC       shift and go to state 87
+
+
+state 82
+
+    (49) acceso -> IDENTIFICADOR CORCHETEA tipo CORCHETEC IGUAL tipo .
+
+    PUNTOCOMA       reduce using rule 49 (acceso -> IDENTIFICADOR CORCHETEA tipo CORCHETEC IGUAL tipo .)
+
+
+state 83
+
+    (42) evaluacion -> resIf PARENTESISA tipo operador tipo PARENTESISC . LLAVEA resGoto IDENTIFICADOR PUNTOCOMA LLAVEC
+
+    LLAVEA          shift and go to state 88
+
+
+state 84
+
+    (43) imprimir -> resFmt PUNTO resPrintf PARENTESISA CADENA COMA . tipo PARENTESISC
+    (44) imprimir -> resFmt PUNTO resPrintf PARENTESISA CADENA COMA . IDENTIFICADOR CORCHETEA resInt PARENTESISA tipo PARENTESISC CORCHETEC PARENTESISC
+    (45) imprimir -> resFmt PUNTO resPrintf PARENTESISA CADENA COMA . IDENTIFICADOR CORCHETEA tipo CORCHETEC PARENTESISC
+    (46) imprimir -> resFmt PUNTO resPrintf PARENTESISA CADENA COMA . resInt PARENTESISA tipo PARENTESISC PARENTESISC
+    (27) tipo -> . ENTERO
+    (28) tipo -> . FLOTANTE
+    (29) tipo -> . IDENTIFICADOR
+
+    IDENTIFICADOR   shift and go to state 90
+    resInt          shift and go to state 91
+    ENTERO          shift and go to state 40
+    FLOTANTE        shift and go to state 41
+
+    tipo                           shift and go to state 89
+
+state 85
+
+    (22) temporal -> IDENTIFICADOR IGUAL IDENTIFICADOR CORCHETEA resInt PARENTESISA tipo . PARENTESISC CORCHETEC
+
+    PARENTESISC     shift and go to state 92
+
+
+state 86
+
+    (25) temporal -> IDENTIFICADOR IGUAL resMath PUNTO resMod PARENTESISA tipo . COMA tipo PARENTESISC
+
+    COMA            shift and go to state 93
+
+
+state 87
+
+    (48) acceso -> IDENTIFICADOR CORCHETEA resInt PARENTESISA tipo PARENTESISC CORCHETEC . IGUAL tipo
+
+    IGUAL           shift and go to state 94
+
+
+state 88
+
+    (42) evaluacion -> resIf PARENTESISA tipo operador tipo PARENTESISC LLAVEA . resGoto IDENTIFICADOR PUNTOCOMA LLAVEC
+
+    resGoto         shift and go to state 95
+
+
+state 89
+
+    (43) imprimir -> resFmt PUNTO resPrintf PARENTESISA CADENA COMA tipo . PARENTESISC
+
+    PARENTESISC     shift and go to state 96
+
+
+state 90
+
+    (44) imprimir -> resFmt PUNTO resPrintf PARENTESISA CADENA COMA IDENTIFICADOR . CORCHETEA resInt PARENTESISA tipo PARENTESISC CORCHETEC PARENTESISC
+    (45) imprimir -> resFmt PUNTO resPrintf PARENTESISA CADENA COMA IDENTIFICADOR . CORCHETEA tipo CORCHETEC PARENTESISC
+    (29) tipo -> IDENTIFICADOR .
+
+    CORCHETEA       shift and go to state 97
+    PARENTESISC     reduce using rule 29 (tipo -> IDENTIFICADOR .)
+
+
+state 91
+
+    (46) imprimir -> resFmt PUNTO resPrintf PARENTESISA CADENA COMA resInt . PARENTESISA tipo PARENTESISC PARENTESISC
+
+    PARENTESISA     shift and go to state 98
+
+
+state 92
+
+    (22) temporal -> IDENTIFICADOR IGUAL IDENTIFICADOR CORCHETEA resInt PARENTESISA tipo PARENTESISC . CORCHETEC
+
+    CORCHETEC       shift and go to state 99
+
+
+state 93
+
+    (25) temporal -> IDENTIFICADOR IGUAL resMath PUNTO resMod PARENTESISA tipo COMA . tipo PARENTESISC
+    (27) tipo -> . ENTERO
+    (28) tipo -> . FLOTANTE
+    (29) tipo -> . IDENTIFICADOR
+
+    ENTERO          shift and go to state 40
+    FLOTANTE        shift and go to state 41
+    IDENTIFICADOR   shift and go to state 42
+
+    tipo                           shift and go to state 100
+
+state 94
+
+    (48) acceso -> IDENTIFICADOR CORCHETEA resInt PARENTESISA tipo PARENTESISC CORCHETEC IGUAL . tipo
+    (27) tipo -> . ENTERO
+    (28) tipo -> . FLOTANTE
+    (29) tipo -> . IDENTIFICADOR
+
+    ENTERO          shift and go to state 40
+    FLOTANTE        shift and go to state 41
+    IDENTIFICADOR   shift and go to state 42
+
+    tipo                           shift and go to state 101
+
+state 95
+
+    (42) evaluacion -> resIf PARENTESISA tipo operador tipo PARENTESISC LLAVEA resGoto . IDENTIFICADOR PUNTOCOMA LLAVEC
+
+    IDENTIFICADOR   shift and go to state 102
+
+
+state 96
+
+    (43) imprimir -> resFmt PUNTO resPrintf PARENTESISA CADENA COMA tipo PARENTESISC .
+
+    PUNTOCOMA       reduce using rule 43 (imprimir -> resFmt PUNTO resPrintf PARENTESISA CADENA COMA tipo PARENTESISC .)
+
+
+state 97
+
+    (44) imprimir -> resFmt PUNTO resPrintf PARENTESISA CADENA COMA IDENTIFICADOR CORCHETEA . resInt PARENTESISA tipo PARENTESISC CORCHETEC PARENTESISC
+    (45) imprimir -> resFmt PUNTO resPrintf PARENTESISA CADENA COMA IDENTIFICADOR CORCHETEA . tipo CORCHETEC PARENTESISC
+    (27) tipo -> . ENTERO
+    (28) tipo -> . FLOTANTE
+    (29) tipo -> . IDENTIFICADOR
+
+    resInt          shift and go to state 103
+    ENTERO          shift and go to state 40
+    FLOTANTE        shift and go to state 41
+    IDENTIFICADOR   shift and go to state 42
+
+    tipo                           shift and go to state 104
+
+state 98
+
+    (46) imprimir -> resFmt PUNTO resPrintf PARENTESISA CADENA COMA resInt PARENTESISA . tipo PARENTESISC PARENTESISC
+    (27) tipo -> . ENTERO
+    (28) tipo -> . FLOTANTE
+    (29) tipo -> . IDENTIFICADOR
+
+    ENTERO          shift and go to state 40
+    FLOTANTE        shift and go to state 41
+    IDENTIFICADOR   shift and go to state 42
+
+    tipo                           shift and go to state 105
+
+state 99
+
+    (22) temporal -> IDENTIFICADOR IGUAL IDENTIFICADOR CORCHETEA resInt PARENTESISA tipo PARENTESISC CORCHETEC .
+
+    PUNTOCOMA       reduce using rule 22 (temporal -> IDENTIFICADOR IGUAL IDENTIFICADOR CORCHETEA resInt PARENTESISA tipo PARENTESISC CORCHETEC .)
+
+
+state 100
+
+    (25) temporal -> IDENTIFICADOR IGUAL resMath PUNTO resMod PARENTESISA tipo COMA tipo . PARENTESISC
+
+    PARENTESISC     shift and go to state 106
+
+
+state 101
+
+    (48) acceso -> IDENTIFICADOR CORCHETEA resInt PARENTESISA tipo PARENTESISC CORCHETEC IGUAL tipo .
+
+    PUNTOCOMA       reduce using rule 48 (acceso -> IDENTIFICADOR CORCHETEA resInt PARENTESISA tipo PARENTESISC CORCHETEC IGUAL tipo .)
+
+
+state 102
+
+    (42) evaluacion -> resIf PARENTESISA tipo operador tipo PARENTESISC LLAVEA resGoto IDENTIFICADOR . PUNTOCOMA LLAVEC
+
+    PUNTOCOMA       shift and go to state 107
+
+
+state 103
+
+    (44) imprimir -> resFmt PUNTO resPrintf PARENTESISA CADENA COMA IDENTIFICADOR CORCHETEA resInt . PARENTESISA tipo PARENTESISC CORCHETEC PARENTESISC
+
+    PARENTESISA     shift and go to state 108
+
+
+state 104
+
+    (45) imprimir -> resFmt PUNTO resPrintf PARENTESISA CADENA COMA IDENTIFICADOR CORCHETEA tipo . CORCHETEC PARENTESISC
+
+    CORCHETEC       shift and go to state 109
+
+
+state 105
+
+    (46) imprimir -> resFmt PUNTO resPrintf PARENTESISA CADENA COMA resInt PARENTESISA tipo . PARENTESISC PARENTESISC
+
+    PARENTESISC     shift and go to state 110
+
+
+state 106
+
+    (25) temporal -> IDENTIFICADOR IGUAL resMath PUNTO resMod PARENTESISA tipo COMA tipo PARENTESISC .
+
+    PUNTOCOMA       reduce using rule 25 (temporal -> IDENTIFICADOR IGUAL resMath PUNTO resMod PARENTESISA tipo COMA tipo PARENTESISC .)
+
+
+state 107
+
+    (42) evaluacion -> resIf PARENTESISA tipo operador tipo PARENTESISC LLAVEA resGoto IDENTIFICADOR PUNTOCOMA . LLAVEC
+
+    LLAVEC          shift and go to state 111
+
+
+state 108
+
+    (44) imprimir -> resFmt PUNTO resPrintf PARENTESISA CADENA COMA IDENTIFICADOR CORCHETEA resInt PARENTESISA . tipo PARENTESISC CORCHETEC PARENTESISC
+    (27) tipo -> . ENTERO
+    (28) tipo -> . FLOTANTE
+    (29) tipo -> . IDENTIFICADOR
+
+    ENTERO          shift and go to state 40
+    FLOTANTE        shift and go to state 41
+    IDENTIFICADOR   shift and go to state 42
+
+    tipo                           shift and go to state 112
+
+state 109
+
+    (45) imprimir -> resFmt PUNTO resPrintf PARENTESISA CADENA COMA IDENTIFICADOR CORCHETEA tipo CORCHETEC . PARENTESISC
+
+    PARENTESISC     shift and go to state 113
+
+
+state 110
+
+    (46) imprimir -> resFmt PUNTO resPrintf PARENTESISA CADENA COMA resInt PARENTESISA tipo PARENTESISC . PARENTESISC
+
+    PARENTESISC     shift and go to state 114
+
+
+state 111
+
+    (42) evaluacion -> resIf PARENTESISA tipo operador tipo PARENTESISC LLAVEA resGoto IDENTIFICADOR PUNTOCOMA LLAVEC .
+
+    resReturn       reduce using rule 42 (evaluacion -> resIf PARENTESISA tipo operador tipo PARENTESISC LLAVEA resGoto IDENTIFICADOR PUNTOCOMA LLAVEC .)
+    resFunc         reduce using rule 42 (evaluacion -> resIf PARENTESISA tipo operador tipo PARENTESISC LLAVEA resGoto IDENTIFICADOR PUNTOCOMA LLAVEC .)
+    IDENTIFICADOR   reduce using rule 42 (evaluacion -> resIf PARENTESISA tipo operador tipo PARENTESISC LLAVEA resGoto IDENTIFICADOR PUNTOCOMA LLAVEC .)
+    resGoto         reduce using rule 42 (evaluacion -> resIf PARENTESISA tipo operador tipo PARENTESISC LLAVEA resGoto IDENTIFICADOR PUNTOCOMA LLAVEC .)
+    resIf           reduce using rule 42 (evaluacion -> resIf PARENTESISA tipo operador tipo PARENTESISC LLAVEA resGoto IDENTIFICADOR PUNTOCOMA LLAVEC .)
+    resFmt          reduce using rule 42 (evaluacion -> resIf PARENTESISA tipo operador tipo PARENTESISC LLAVEA resGoto IDENTIFICADOR PUNTOCOMA LLAVEC .)
+    $end            reduce using rule 42 (evaluacion -> resIf PARENTESISA tipo operador tipo PARENTESISC LLAVEA resGoto IDENTIFICADOR PUNTOCOMA LLAVEC .)
+
+
+state 112
+
+    (44) imprimir -> resFmt PUNTO resPrintf PARENTESISA CADENA COMA IDENTIFICADOR CORCHETEA resInt PARENTESISA tipo . PARENTESISC CORCHETEC PARENTESISC
+
+    PARENTESISC     shift and go to state 115
+
+
+state 113
+
+    (45) imprimir -> resFmt PUNTO resPrintf PARENTESISA CADENA COMA IDENTIFICADOR CORCHETEA tipo CORCHETEC PARENTESISC .
+
+    PUNTOCOMA       reduce using rule 45 (imprimir -> resFmt PUNTO resPrintf PARENTESISA CADENA COMA IDENTIFICADOR CORCHETEA tipo CORCHETEC PARENTESISC .)
+
+
+state 114
+
+    (46) imprimir -> resFmt PUNTO resPrintf PARENTESISA CADENA COMA resInt PARENTESISA tipo PARENTESISC PARENTESISC .
+
+    PUNTOCOMA       reduce using rule 46 (imprimir -> resFmt PUNTO resPrintf PARENTESISA CADENA COMA resInt PARENTESISA tipo PARENTESISC PARENTESISC .)
+
+
+state 115
+
+    (44) imprimir -> resFmt PUNTO resPrintf PARENTESISA CADENA COMA IDENTIFICADOR CORCHETEA resInt PARENTESISA tipo PARENTESISC . CORCHETEC PARENTESISC
+
+    CORCHETEC       shift and go to state 116
+
+
+state 116
+
+    (44) imprimir -> resFmt PUNTO resPrintf PARENTESISA CADENA COMA IDENTIFICADOR CORCHETEA resInt PARENTESISA tipo PARENTESISC CORCHETEC . PARENTESISC
+
+    PARENTESISC     shift and go to state 117
+
+
+state 117
+
+    (44) imprimir -> resFmt PUNTO resPrintf PARENTESISA CADENA COMA IDENTIFICADOR CORCHETEA resInt PARENTESISA tipo PARENTESISC CORCHETEC PARENTESISC .
+
+    PUNTOCOMA       reduce using rule 44 (imprimir -> resFmt PUNTO resPrintf PARENTESISA CADENA COMA IDENTIFICADOR CORCHETEA resInt PARENTESISA tipo PARENTESISC CORCHETEC PARENTESISC .)
+

@@ -2,7 +2,6 @@
 # we'll create their 3 address code using the symbol table 
 # generated in the first read, all the 3 address code generates in this file
 from enum import Enum
-from os import environ
 from Models.SintacticNode import SintacticNode
 from Models.Environment import Environment
 from Models.Symbol import EnumType, Symbol
@@ -38,6 +37,8 @@ class secondRead():
         nuevoEntorno = Environment(self.environment, 'main')
         self.environmentList.append(nuevoEntorno)
         self.generateCode(root, nuevoEntorno)
+        self.code += '}' + self.newLine
+        self.contadorLineas += 1
 
     def firstRead(self, root, actual):
         if(root.nombre == 'INICIO' or root.nombre == 'INSTRUCCION'):
@@ -194,7 +195,7 @@ class secondRead():
                         self.contadorLineas += 1
                         tagSalida = self.maxTag
                         self.maxTag += 1
-                        self.code += '\t\tif T' + str(caracter) + ' == 36 {goto L' + str(tagSalida) + ';} //End of string' + self.newLine
+                        self.code += '\t\tif (T' + str(caracter) + ' == 36) {goto L' + str(tagSalida) + ';} //End of string' + self.newLine
                         self.optimizationTable.insertar('', '', self.contadorLineas, 'Creacion de codigo', 'Mirilla - Regla 3')
                         self.contadorLineas += 1
                         self.code += '\t\tHEAP[int(HP)] = T' + str(caracter) + '; //Insert character in heap' + self.newLine
@@ -396,7 +397,7 @@ class secondRead():
         inicio = self.resolverExpresion(root.getHijo(1), actual)
         self.breakTag = salidaCiclo = self.maxTag
         self.maxTag += 1
-        self.code += '\t\tif T' + str(inicio) + ' == 0 {goto L' + str(salidaCiclo) + ';}' + self.newLine
+        self.code += '\t\tif (T' + str(inicio) + ' == 0) {goto L' + str(salidaCiclo) + ';}' + self.newLine
         self.contadorLineas += 1
         self.optimizationTable.insertar('', '', self.contadorLineas, 'Creacion de codigo', 'Mirilla - Regla 3')
         self.generateCode(root.getHijo(2), actual)
@@ -430,9 +431,12 @@ class secondRead():
                 self.maxTag += 1
                 self.breakTag = salidaCiclo = self.maxTag
                 self.maxTag += 1
-                self.code += '\tSTACK[int(SP) + ' + str(posicionVariable) + '] = T' + str(temporalValor) + '; //Set variable initial value' + self.newLine
+                self.code += '\tT' + str(self.actualTemp) + ' = SP + ' + str(posicionVariable) + ';' + self.newLine
                 self.contadorLineas += 1
-                self.code += '\t\tif T' + str(temporalValor) + ' == T' + str(final) + ' {goto L' + str(salidaCiclo) + ';}' + self.newLine
+                self.actualTemp += 1
+                self.code += '\tSTACK[int(' + str(self.actualTemp - 1) + ')] = T' + str(temporalValor) + '; //Set variable initial value' + self.newLine
+                self.contadorLineas += 1
+                self.code += '\t\tif (T' + str(temporalValor) + ' == T' + str(final) + ') {goto L' + str(salidaCiclo) + ';}' + self.newLine
                 self.contadorLineas += 1
                 self.optimizationTable.insertar('', '', self.contadorLineas, 'Creacion de codigo', 'Mirilla - Regla 3')
                 self.actualTemp += 1
@@ -469,7 +473,7 @@ class secondRead():
             self.maxTag += 1
             self.salidaCiclo = self.maxTag
             self.maxTag += 1
-            self.code += '\t\tif T' + str(self.actualTemp) + ' == 36 {goto L' + str(self.salidaCiclo) + ';}' + self.newLine
+            self.code += '\t\tif (T' + str(self.actualTemp) + ' == 36) {goto L' + str(self.salidaCiclo) + ';}' + self.newLine
             self.contadorLineas += 1
             self.optimizationTable.insertar('', '', self.contadorLineas, 'Creacion de codigo', 'Mirilla - Regla 3')
             self.actualTemp += 1
@@ -489,7 +493,7 @@ class secondRead():
             if(tipoExpresion == EnumType.boleano):
                 etiquetaFalsa = self.maxTag
                 self.maxTag += 1
-                self.code += '\tif T' + str(temporalValor) + ' == 0 {goto L' + str(etiquetaFalsa) + ';} // Condicion Falsa' + self.newLine
+                self.code += '\tif (T' + str(temporalValor) + ' == 0) {goto L' + str(etiquetaFalsa) + ';} // Condicion Falsa' + self.newLine
                 self.contadorLineas += 1
                 self.optimizationTable.insertar('', '', self.contadorLineas, 'Creacion de codigo', 'Mirilla - Regla 3')
                 self.generateCode(root.getHijo(2), actual)
@@ -506,7 +510,7 @@ class secondRead():
                     self.maxTag += 1
                     etiquetaFalsa = self.maxTag
                     self.maxTag += 1
-                    self.code += '\tif T' + str(temporalValor) + ' == 0 {goto L' + str(etiquetaFalsa) + ';} // Condicion Falsa' + self.newLine
+                    self.code += '\tif (T' + str(temporalValor) + ' == 0) {goto L' + str(etiquetaFalsa) + ';} // Condicion Falsa' + self.newLine
                     self.contadorLineas += 1
                     self.optimizationTable.insertar('', '', self.contadorLineas, 'Creacion de codigo', 'Mirilla - Regla 3')
                     self.generateCode(root.getHijo(2), actual)
@@ -524,7 +528,7 @@ class secondRead():
                     self.maxTag += 1
                     etiquetaSalida = self.maxTag
                     self.maxTag += 1
-                    self.code += '\tif T' + str(temporalValor) + ' == 0 {goto L' + str(etiquetaFalsa) + ';} // Condicion verdadera' + self.newLine
+                    self.code += '\tif (T' + str(temporalValor) + ' == 0) {goto L' + str(etiquetaFalsa) + ';} // Condicion verdadera' + self.newLine
                     self.contadorLineas += 1
                     self.optimizationTable.insertar('', '', self.contadorLineas, 'Creacion de codigo', 'Mirilla - Regla 3')
                     self.generateCode(root.getHijo(2), actual)
@@ -546,7 +550,7 @@ class secondRead():
             if(tipoExpresion == EnumType.boleano):
                 etiquetaFalsa = self.maxTag
                 self.maxTag += 1
-                self.code += '\tif T' + str(temporalValor) + ' == 0 {goto L' + str(etiquetaFalsa) + ';} // Condicion Falsa' + self.newLine
+                self.code += '\tif (T' + str(temporalValor) + ' == 0) {goto L' + str(etiquetaFalsa) + ';} // Condicion Falsa' + self.newLine
                 self.contadorLineas += 1
                 self.optimizationTable.insertar('', '', self.contadorLineas, 'Creacion de codigo', 'Mirilla - Regla 3')
                 self.generateCode(root.getHijo(2), actual)
@@ -591,7 +595,7 @@ class secondRead():
                     self.contadorLineas += 1
                     hpActual = self.actualTemp
                     self.actualTemp += 1
-                    self.code += '\tif(T' + str(temporalValor) + ' >= 0) {goto L' + str(self.maxTag) + ';} // Number is positive' + self.newLine
+                    self.code += '\tif (T' + str(temporalValor) + ' >= 0) {goto L' + str(self.maxTag) + ';} // Number is positive' + self.newLine
                     self.contadorLineas += 1
                     self.optimizationTable.insertar('', '', self.contadorLineas, 'Creacion de codigo', 'Mirilla - Regla 3')
                     self.code += '\tHEAP[int(HP)] = 45; //Add negative symbol to string' + self.newLine
@@ -805,7 +809,7 @@ class secondRead():
             self.maxTag += 1
             etiquetaSalida = self.maxTag
             self.maxTag += 1
-            self.code += '\tif(T' + str(operador1) + ' == T' + str(operador2) + ') {' + 'goto L' + str(etiquetaVerdadera) + ';} //goto true tag' + self.newLine
+            self.code += '\tif (T' + str(operador1) + ' == T' + str(operador2) + ') {' + 'goto L' + str(etiquetaVerdadera) + ';} //goto true tag' + self.newLine
             self.contadorLineas += 1
             self.optimizationTable.insertar('', '', self.contadorLineas, 'Creacion de codigo', 'Mirilla - Regla 3')
             self.code += '\tT' + str(self.actualTemp) + ' = 0;' + self.newLine
@@ -832,7 +836,7 @@ class secondRead():
             self.maxTag += 1
             etiquetaSalida = self.maxTag
             self.maxTag += 1
-            self.code += '\tif(T' + str(operador1) + ' != T' + str(operador2) + ') {' + 'goto L' + str(etiquetaVerdadera) + ';} //goto true tag' + self.newLine
+            self.code += '\tif (T' + str(operador1) + ' != T' + str(operador2) + ') {' + 'goto L' + str(etiquetaVerdadera) + ';} //goto true tag' + self.newLine
             self.contadorLineas += 1
             self.optimizationTable.insertar('', '', self.contadorLineas, 'Creacion de codigo', 'Mirilla - Regla 3')
             self.code += '\tT' + str(self.actualTemp) + ' = 0;' + self.newLine
@@ -859,7 +863,7 @@ class secondRead():
             self.maxTag += 1
             etiquetaSalida = self.maxTag
             self.maxTag += 1
-            self.code += '\tif(T' + str(operador1) + ' > T' + str(operador2) + ') {' + 'goto L' + str(etiquetaVerdadera) + ';} //goto true tag' + self.newLine
+            self.code += '\tif (T' + str(operador1) + ' > T' + str(operador2) + ') {' + 'goto L' + str(etiquetaVerdadera) + ';} //goto true tag' + self.newLine
             self.contadorLineas += 1
             self.optimizationTable.insertar('', '', self.contadorLineas, 'Creacion de codigo', 'Mirilla - Regla 3')
             self.code += '\tT' + str(self.actualTemp) + ' = 0;' + self.newLine
@@ -886,7 +890,7 @@ class secondRead():
             self.maxTag += 1
             etiquetaSalida = self.maxTag
             self.maxTag += 1
-            self.code += '\tif(T' + str(operador1) + ' < T' + str(operador2) + ') {' + 'goto L' + str(etiquetaVerdadera) + ';} //goto true tag' + self.newLine
+            self.code += '\tif (T' + str(operador1) + ' < T' + str(operador2) + ') {' + 'goto L' + str(etiquetaVerdadera) + ';} //goto true tag' + self.newLine
             self.contadorLineas += 1
             self.optimizationTable.insertar('', '', self.contadorLineas, 'Creacion de codigo', 'Mirilla - Regla 3')
             self.code += '\tT' + str(self.actualTemp) + ' = 0;' + self.newLine
@@ -913,7 +917,7 @@ class secondRead():
             self.maxTag += 1
             etiquetaSalida = self.maxTag
             self.maxTag += 1
-            self.code += '\tif(T' + str(operador1) + ' >= T' + str(operador2) + ') {' + 'goto L' + str(etiquetaVerdadera) + ';} //goto true tag' + self.newLine
+            self.code += '\tif (T' + str(operador1) + ' >= T' + str(operador2) + ') {' + 'goto L' + str(etiquetaVerdadera) + ';} //goto true tag' + self.newLine
             self.contadorLineas += 1
             self.optimizationTable.insertar('', '', self.contadorLineas, 'Creacion de codigo', 'Mirilla - Regla 3')
             self.code += '\tT' + str(self.actualTemp) + ' = 0;' + self.newLine
@@ -940,7 +944,7 @@ class secondRead():
             self.maxTag += 1
             etiquetaSalida = self.maxTag
             self.maxTag += 1
-            self.code += '\tif(T' + str(operador1) + ' <= T' + str(operador2) + ') {' + 'goto L' + str(etiquetaVerdadera) + ';} //goto true tag' + self.newLine
+            self.code += '\tif (T' + str(operador1) + ' <= T' + str(operador2) + ') {' + 'goto L' + str(etiquetaVerdadera) + ';} //goto true tag' + self.newLine
             self.contadorLineas += 1
             self.optimizationTable.insertar('', '', self.contadorLineas, 'Creacion de codigo', 'Mirilla - Regla 3')
             self.code += '\tT' + str(self.actualTemp) + ' = 0;' + self.newLine
@@ -967,10 +971,10 @@ class secondRead():
             self.maxTag += 1
             etiquetaSalida = self.maxTag
             self.maxTag += 1
-            self.code += '\tif(T' + str(operador1) + ' == 1) {' + 'goto L' + str(etiquetaVerdadera) + ';} //goto true tag' + self.newLine
+            self.code += '\tif (T' + str(operador1) + ' == 1) {' + 'goto L' + str(etiquetaVerdadera) + ';} //goto true tag' + self.newLine
             self.contadorLineas += 1
             self.optimizationTable.insertar('', '', self.contadorLineas, 'Creacion de codigo', 'Mirilla - Regla 3')
-            self.code += '\tif(T' + str(operador2) + ' == 1) {' + 'goto L' + str(etiquetaVerdadera) + ';} //goto true tag' + self.newLine
+            self.code += '\tif (T' + str(operador2) + ' == 1) {' + 'goto L' + str(etiquetaVerdadera) + ';} //goto true tag' + self.newLine
             self.contadorLineas += 1
             self.optimizationTable.insertar('', '', self.contadorLineas, 'Creacion de codigo', 'Mirilla - Regla 3')
             self.code += '\tT' + str(self.actualTemp) + ' = 0;' + self.newLine
@@ -1008,7 +1012,7 @@ class secondRead():
             self.contadorLineas += 1
             etiquetaVerdadera = self.maxTag
             self.maxTag += 1
-            self.code += '\t\tif(T' + str(operador2) + ' == 1) {' + 'goto L' + str(etiquetaVerdadera) + ';} //goto true tag' + self.newLine
+            self.code += '\t\tif (T' + str(operador2) + ' == 1) {' + 'goto L' + str(etiquetaVerdadera) + ';} //goto true tag' + self.newLine
             self.contadorLineas += 1
             self.optimizationTable.insertar('', '', self.contadorLineas, 'Creacion de codigo', 'Mirilla - Regla 3')
             self.code += '\tT' + str(self.actualTemp) + ' = 0;' + self.newLine
@@ -1034,7 +1038,7 @@ class secondRead():
             self.maxTag += 1
             etiquetaSalida = self.maxTag
             self.maxTag += 1
-            self.code += '\tif(T' + str(operador1) + ' == 1) {' + 'goto L' + str(etiquetaVerdadera) + ';} //goto true tag' + self.newLine
+            self.code += '\tif (T' + str(operador1) + ' == 1) {' + 'goto L' + str(etiquetaVerdadera) + ';} //goto true tag' + self.newLine
             self.contadorLineas += 1
             self.optimizationTable.insertar('', '', self.contadorLineas, 'Creacion de codigo', 'Mirilla - Regla 3')
             self.code += '\tT' + str(self.actualTemp) + ' = 1;' + self.newLine
@@ -1292,7 +1296,7 @@ class secondRead():
                 self.contadorLineas += 1
                 hpActual = self.actualTemp
                 self.actualTemp += 1
-                self.code += '\tif(T' + str(temporalValor) + ' >= 0) {goto L' + str(self.maxTag) + ';} // Number is positive' + self.newLine
+                self.code += '\tif (T' + str(temporalValor) + ' >= 0) {goto L' + str(self.maxTag) + ';} // Number is positive' + self.newLine
                 self.contadorLineas += 1
                 self.optimizationTable.insertar('', '', self.contadorLineas, 'Creacion de codigo', 'Mirilla - Regla 3')
                 self.code += '\tHEAP[int(HP)] = 45; //Add negative symbol to string' + self.newLine
