@@ -1452,6 +1452,7 @@ from Models.Symbol import EnumType
 from Models.Environment import Environment
 from Translator.Header import Header
 from Translator.secondRead import secondRead
+from Translator.analizador import parsear
 parser = yacc.yacc()
 
 def getErrores():
@@ -1479,6 +1480,9 @@ def parse(inp):
     header.generarCodigo()
     cadenaConsola = header.codigo
     cadenaConsola += second.code
+    tempo = re.sub(r'\/\/.*', '', cadenaConsola)
+    tempo = re.sub(r'\t', '', tempo)
+    prueba = parsear(tempo)
     if len(errores) == 0:
         # "Environment", "Name", "Type", "Role", "Lower", "Upper", "Absolute", "Relative", "Size", 
         # "Reference", "Row", "Column"
