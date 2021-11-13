@@ -6,3 +6,4 @@ class lineaCodigo():
         self.op = op
         self.z = z
         self.linea = linea
+        self.modificada = 0
