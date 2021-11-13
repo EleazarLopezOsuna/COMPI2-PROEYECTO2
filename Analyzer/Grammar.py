@@ -1452,7 +1452,6 @@ from Models.Symbol import EnumType
 from Models.Environment import Environment
 from Translator.Header import Header
 from Translator.secondRead import secondRead
-from Translator.AnalizadorC3D import parsear
 parser = yacc.yacc()
 
 def getErrores():
@@ -1475,34 +1474,11 @@ def parse(inp):
     retorno = []
     second = secondRead(root, 4, header.environment)
     second.startTranslation(second.root)
+    second.code += '}'
     header.numeroTemporales = second.actualTemp
     header.generarCodigo()
     cadenaConsola = header.codigo
     cadenaConsola += second.code
-    cadenaTemporal = re.sub(r'\/\/.*', '', cadenaConsola)
-    cadenaTemporal = re.sub(r'\t', '', cadenaTemporal)
-    cadenaPrueba = 'T0 = i + 1;'
-    cadenaPrueba += 'T0 = STACK[T0];'
-    cadenaPrueba += 'T0 = i + 2;'
-    cadenaPrueba += 'T2 = HEAP[T0];'
-    cadenaPrueba += 'if (T2 == 36) {goto L1;}'
-    cadenaPrueba += 'T1 = T1 + 1;'
-    cadenaPrueba += 'HP = HP + 1;'
-
-    #cadenaPrueba = 'L1:'
-    #cadenaPrueba += 't1 = 4 * i;'
-    #cadenaPrueba += 't2 = a[t1];'
-    #cadenaPrueba += 't3 = 4 * i;'
-    #cadenaPrueba += 't4 = b[t3];'
-    #cadenaPrueba += 't5 = t2 * t4;'
-    #cadenaPrueba += 't6 = prod + t5;'
-    #cadenaPrueba += 'prod = t6;'
-    #cadenaPrueba += 't7 = i + 1;'
-    #cadenaPrueba += 'i = t7;'
-    #cadenaPrueba += 'if (i<=20) {goto L1;}'
-
-    parsear(cadenaTemporal)
-    #parsear(cadenaPrueba)
     if len(errores) == 0:
         # "Environment", "Name", "Type", "Role", "Lower", "Upper", "Absolute", "Relative", "Size", 
         # "Reference", "Row", "Column"

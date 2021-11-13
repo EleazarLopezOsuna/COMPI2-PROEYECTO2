@@ -2,6 +2,7 @@
 # we'll create their 3 address code using the symbol table 
 # generated in the first read, all the 3 address code generates in this file
 from enum import Enum
+from os import environ
 from Models.SintacticNode import SintacticNode
 from Models.Environment import Environment
 from Models.Symbol import EnumType, Symbol
@@ -37,8 +38,6 @@ class secondRead():
         nuevoEntorno = Environment(self.environment, 'main')
         self.environmentList.append(nuevoEntorno)
         self.generateCode(root, nuevoEntorno)
-        self.code += '}' + self.newLine
-        self.contadorLineas += 1
 
     def firstRead(self, root, actual):
         if(root.nombre == 'INICIO' or root.nombre == 'INSTRUCCION'):
@@ -92,20 +91,8 @@ class secondRead():
             # Sin parametros
             nombreFuncion = root.getHijo(0).valor
             resultado = actual.buscar(nombreFuncion)
-            size = 0
-
-            # Guardando los temporales
             if(self.inFunction == 1):
-                for entorno in self.environmentList:
-                    if(entorno.nombre == nombreFuncion):
-                        self.code += '// Empieza almacenamiento de parametros' + self.newLine
-                        size = len(entorno.tabla)
-                        for i in range(self.primerTemporalFuncion, self.actualTemp):
-                            self.code += '\tSTACK[int(SP)] = T' + str(i) + '; //Almacenamos el temporal ' + str(i) + self.newLine
-                            self.contadorLineas += 1
-                            self.code += '\tSP = SP + 1; //Update SP' + self.newLine
-                            self.contadorLineas += 1
-                            size += 1
+                print('Estoy en una funcion')
             self.code += '\tT' + str(self.actualTemp) + ' = SP; //Save actual environment' + self.newLine
             self.contadorLineas += 1
             valorTemporal = self.actualTemp
@@ -121,47 +108,24 @@ class secondRead():
             retorno = self.actualTemp
             self.contadorLineas += 1
             self.actualTemp += 1
-            #self.code += '\tSP = T' + str(valorTemporal) + '; //Get previous environment back' + self.newLine
-            #self.contadorLineas += 1
-
-            # Recuperando los temporales
-            if(self.inFunction == 1):
-                for entorno in self.environmentList:
-                    if(entorno.nombre == nombreFuncion):
-                        self.code += '// Empieza almacenamiento de parametros' + self.newLine
-                        size = len(entorno.tabla)
-                        for i in range(self.primerTemporalFuncion, self.actualTemp):
-                            self.code += '\tSTACK[int(SP)] = T' + str(i) + '; //Almacenamos el temporal ' + str(i) + self.newLine
-                            self.contadorLineas += 1
-                            self.code += '\tSP = SP + 1; //Update SP' + self.newLine
-                            self.contadorLineas += 1
-                            size += 1
+            self.code += '\tSP = T' + str(valorTemporal) + '; //Get previous environment back' + self.newLine
+            self.contadorLineas += 1
             self.tipoDato = resultado.functionType
             return retorno
         elif(len(root.hijos) == 5):
             # Con parametros
             nombreFuncion = root.getHijo(0).valor
             resultado = actual.buscar(nombreFuncion)
-            size = 0
-            # Guardando los temporales
             if(self.inFunction == 1):
-                self.ultimoTemporalFuncion = self.actualTemp
-                self.code += '// Empieza almacenamiento de parametros' + self.newLine
-                for i in range(self.primerTemporalFuncion, self.ultimoTemporalFuncion):
-                    self.code += '\tSTACK[int(SP)] = T' + str(i) + '; //Almacenamos el temporal ' + str(i) + self.newLine
-                    self.contadorLineas += 1
-                    if i < (self.ultimoTemporalFuncion - 1):
-                        self.code += '\tSP = SP + 1; //Update SP' + self.newLine
-                        self.contadorLineas += 1
-                    size += 1
-                self.code += '\tT' + str(self.actualTemp) + ' = SP; //Save environment' + self.newLine
-                self.entornoNuevo = self.actualTemp
-                self.actualTemp += 1
-                self.contadorLineas += 1
-                self.code += '\tSP = SP - ' + str(size - 1) + '; //Reset environment' + self.newLine
-                self.contadorLineas += 1
-                self.code += '// Termina almacenamiento de parametros' + self.newLine
-                self.contadorLineas += 1
+                print('Estoy en una funcion')
+            self.code += '\tT' + str(self.actualTemp) + ' = SP; //Save actual environment' + self.newLine
+            self.contadorLineas += 1
+            valorTemporal = self.actualTemp
+            self.actualTemp += 1
+            self.code += '\tSP = SP + 1; //Set new environment' + self.newLine
+            #self.code += '\tSP = ' + str(resultado.relative) + '; //Set new environment' + self.newLine
+            #self.contadorLineas += 1
+            # Inicio paso de variables
             contador = 1
             if(resultado.functionType == None):
                 contador = 0
@@ -170,7 +134,7 @@ class secondRead():
                     operador1 = self.resolverExpresion(hijo, actual)
                     tipoOperador1 = self.tipoDato
                     if(tipoOperador1 in (EnumType.entero, EnumType.flotante, EnumType.boleano)):
-                        self.code += '\tT' + str(self.actualTemp) + ' = T' + str(self.entornoNuevo) + ' + ' + str(contador) + '; // Set position for variable' + self.newLine
+                        self.code += '\tT' + str(self.actualTemp) + ' = SP + ' + str(contador) + '; // Set position for variable' + self.newLine
                         self.actualTemp += 1
                         self.contadorLineas += 1
                         self.code += '\tSTACK[int(T' + str(self.actualTemp - 1) + ')] = T' + str(operador1) + '; // Set parameter value' + self.newLine
@@ -195,7 +159,7 @@ class secondRead():
                         self.contadorLineas += 1
                         tagSalida = self.maxTag
                         self.maxTag += 1
-                        self.code += '\t\tif (T' + str(caracter) + ' == 36) {goto L' + str(tagSalida) + ';} //End of string' + self.newLine
+                        self.code += '\t\tif T' + str(caracter) + ' == 36 {goto L' + str(tagSalida) + ';} //End of string' + self.newLine
                         self.optimizationTable.insertar('', '', self.contadorLineas, 'Creacion de codigo', 'Mirilla - Regla 3')
                         self.contadorLineas += 1
                         self.code += '\t\tHEAP[int(HP)] = T' + str(caracter) + '; //Insert character in heap' + self.newLine
@@ -220,8 +184,6 @@ class secondRead():
                         self.contadorLineas += 1
                         contador += 1
             # Finaliza paso de variables
-            self.code += '\tSP = T' + str(self.entornoNuevo) + '; //New environment' + self.newLine
-            self.contadorLineas += 1
             self.code += '\t' + nombreFuncion + '(); //Call function ' + nombreFuncion + self.newLine
             self.contadorLineas += 1
             self.code += '\tT' + str(self.actualTemp) + ' = SP + 0; //Get return position' + self.newLine
@@ -231,20 +193,13 @@ class secondRead():
             retorno = self.actualTemp
             self.contadorLineas += 1
             self.actualTemp += 1
-            # Recuperando los temporales
-            if(self.inFunction == 1):
-                self.code += '// Empieza recuperacion de parametros' + self.newLine
-                for i in range(self.primerTemporalFuncion, self.ultimoTemporalFuncion):
-                    self.code += '\tT' + str(i) + ' = STACK[int(SP)]; //Almacenamos el temporal ' + str(i) + self.newLine
-                    self.contadorLineas += 1
-                    self.code += '\tT' + str(i) + ' = STACK[int(T' + str(i) +')]; //Almacenamos el temporal ' + str(i) + self.newLine
-                    self.contadorLineas += 1
-                    if i < (self.ultimoTemporalFuncion - 1):
-                        self.code += '\tSP = SP - 1; //Update SP' + self.newLine
-                        self.contadorLineas += 1
-                self.code += '// Termina recuperacion de parametros' + self.newLine
+            self.code += '\tSP = T' + str(valorTemporal) + '; //Get previous environment back' + self.newLine
+            self.contadorLineas += 1
             self.tipoDato = resultado.functionType
             return retorno
+
+    def guardarVariablesEnStrack(self, actual):
+        print('')
 
     def ejecutarDeclararFuncion(self, root, actual):
         nombreFuncion = root.getHijo(1).valor
@@ -261,7 +216,6 @@ class secondRead():
             actual.insertar(nombreFuncion, Symbol(
                             EnumType.funcion, 'Funcion', None, '', '', self.absolute, self.relative, len(nuevoEntorno.tabla),'', root.getHijo(1).linea, root.getHijo(1).columna, actual.nombre, self.obtenerTipo(root.getHijo(4).getHijo(0).nombre)
                             ))
-            self.primerTemporalFuncion = self.actualTemp
             self.generateCode(root.getHijo(4), nuevoEntorno)
             self.relative = temporalRelative
             actual.modificar(nombreFuncion, Symbol(
@@ -293,7 +247,6 @@ class secondRead():
                 actual.insertar(nombreFuncion, Symbol(
                             EnumType.funcion, 'Funcion', None, '', '', self.absolute, self.relative, len(nuevoEntorno.tabla),'', root.getHijo(1).linea, root.getHijo(1).columna, actual.nombre, self.obtenerTipo(root.getHijo(4).getHijo(0).nombre)
                             ))
-                self.primerTemporalFuncion = self.actualTemp
                 self.generateCode(root.getHijo(5), nuevoEntorno)
                 self.relative = temporalRelative
                 actual.modificar(nombreFuncion, Symbol(
@@ -323,7 +276,6 @@ class secondRead():
                 actual.insertar(nombreFuncion, Symbol(
                             EnumType.funcion, 'Funcion', None, '', '', self.absolute, self.relative, len(nuevoEntorno.tabla),'', root.getHijo(1).linea, root.getHijo(1).columna, actual.nombre, None
                             ))
-                self.primerTemporalFuncion = self.actualTemp
                 self.generateCode(root.getHijo(5), nuevoEntorno)
                 self.relative = temporalRelative
                 actual.modificar(nombreFuncion, Symbol(
@@ -354,7 +306,6 @@ class secondRead():
             actual.insertar(nombreFuncion, Symbol(
                 EnumType.funcion, 'Funcion', None, '', '', self.absolute, self.relative, len(nuevoEntorno.tabla),'', root.getHijo(1).linea, root.getHijo(1).columna, actual.nombre, tipoFuncion
                 ))
-            self.primerTemporalFuncion = self.actualTemp
             self.generateCode(root.getHijo(6), nuevoEntorno)
             self.relative = temporalRelative
             actual.modificar(nombreFuncion, Symbol(
@@ -397,7 +348,7 @@ class secondRead():
         inicio = self.resolverExpresion(root.getHijo(1), actual)
         self.breakTag = salidaCiclo = self.maxTag
         self.maxTag += 1
-        self.code += '\t\tif (T' + str(inicio) + ' == 0) {goto L' + str(salidaCiclo) + ';}' + self.newLine
+        self.code += '\t\tif T' + str(inicio) + ' == 0 {goto L' + str(salidaCiclo) + ';}' + self.newLine
         self.contadorLineas += 1
         self.optimizationTable.insertar('', '', self.contadorLineas, 'Creacion de codigo', 'Mirilla - Regla 3')
         self.generateCode(root.getHijo(2), actual)
@@ -414,8 +365,8 @@ class secondRead():
             if(resultado == None):
                 actual.insertar(nombreVariable, Symbol(EnumType.entero, 'Variable', None, '', '', '', self.relative, 1,'', root.getHijo(1).linea, root.getHijo(1).columna, actual.nombre, None))
                 self.relative += 1
-                #self.code += '\tSP = SP + 1; //Increase SP' + self.newLine
-                #self.contadorLineas += 1
+                self.code += '\tSP = SP + 1; //Increase SP' + self.newLine
+                self.contadorLineas += 1
             posicionVariable = (self.relative - 1)
             inicio = self.resolverExpresion(root.getHijo(3).getHijo(0), actual)
             tipoInicio = self.tipoDato
@@ -431,12 +382,9 @@ class secondRead():
                 self.maxTag += 1
                 self.breakTag = salidaCiclo = self.maxTag
                 self.maxTag += 1
-                self.code += '\tT' + str(self.actualTemp) + ' = SP + ' + str(posicionVariable) + ';' + self.newLine
+                self.code += '\tSTACK[' + str(posicionVariable) + '] = T' + str(temporalValor) + '; //Set variable initial value' + self.newLine
                 self.contadorLineas += 1
-                self.actualTemp += 1
-                self.code += '\tSTACK[int(' + str(self.actualTemp - 1) + ')] = T' + str(temporalValor) + '; //Set variable initial value' + self.newLine
-                self.contadorLineas += 1
-                self.code += '\t\tif (T' + str(temporalValor) + ' == T' + str(final) + ') {goto L' + str(salidaCiclo) + ';}' + self.newLine
+                self.code += '\t\tif T' + str(temporalValor) + ' == T' + str(final) + ' {goto L' + str(salidaCiclo) + ';}' + self.newLine
                 self.contadorLineas += 1
                 self.optimizationTable.insertar('', '', self.contadorLineas, 'Creacion de codigo', 'Mirilla - Regla 3')
                 self.actualTemp += 1
@@ -456,8 +404,8 @@ class secondRead():
             if(resultado == None):
                 actual.insertar(nombreVariable, Symbol(EnumType.caracter, 'Variable', None, '', '', '', self.relative, 1, '', root.getHijo(1).linea, root.getHijo(1).columna, actual.nombre, None))
                 self.relative += 1
-                #self.code += '\tSP = SP + 1; //Increase SP' + self.newLine
-                #self.contadorLineas += 1
+                self.code += '\tSP = SP + 1; //Increase SP' + self.newLine
+                self.contadorLineas += 1
             posicionVariable = (self.relative - 1)
             temporalValor = self.resolverExpresion(root.getHijo(3), actual)
             self.code += '\tT' + str(self.actualTemp) + ' = SP + ' + str(posicionVariable) + '; //Set variable position' + self.newLine
@@ -473,7 +421,7 @@ class secondRead():
             self.maxTag += 1
             self.salidaCiclo = self.maxTag
             self.maxTag += 1
-            self.code += '\t\tif (T' + str(self.actualTemp) + ' == 36) {goto L' + str(self.salidaCiclo) + ';}' + self.newLine
+            self.code += '\t\tif T' + str(self.actualTemp) + ' == 36 {goto L' + str(self.salidaCiclo) + ';}' + self.newLine
             self.contadorLineas += 1
             self.optimizationTable.insertar('', '', self.contadorLineas, 'Creacion de codigo', 'Mirilla - Regla 3')
             self.actualTemp += 1
@@ -493,7 +441,7 @@ class secondRead():
             if(tipoExpresion == EnumType.boleano):
                 etiquetaFalsa = self.maxTag
                 self.maxTag += 1
-                self.code += '\tif (T' + str(temporalValor) + ' == 0) {goto L' + str(etiquetaFalsa) + ';} // Condicion Falsa' + self.newLine
+                self.code += '\tif T' + str(temporalValor) + ' == 0 {goto L' + str(etiquetaFalsa) + ';} // Condicion Falsa' + self.newLine
                 self.contadorLineas += 1
                 self.optimizationTable.insertar('', '', self.contadorLineas, 'Creacion de codigo', 'Mirilla - Regla 3')
                 self.generateCode(root.getHijo(2), actual)
@@ -510,7 +458,7 @@ class secondRead():
                     self.maxTag += 1
                     etiquetaFalsa = self.maxTag
                     self.maxTag += 1
-                    self.code += '\tif (T' + str(temporalValor) + ' == 0) {goto L' + str(etiquetaFalsa) + ';} // Condicion Falsa' + self.newLine
+                    self.code += '\tif T' + str(temporalValor) + ' == 0 {goto L' + str(etiquetaFalsa) + ';} // Condicion Falsa' + self.newLine
                     self.contadorLineas += 1
                     self.optimizationTable.insertar('', '', self.contadorLineas, 'Creacion de codigo', 'Mirilla - Regla 3')
                     self.generateCode(root.getHijo(2), actual)
@@ -528,7 +476,7 @@ class secondRead():
                     self.maxTag += 1
                     etiquetaSalida = self.maxTag
                     self.maxTag += 1
-                    self.code += '\tif (T' + str(temporalValor) + ' == 0) {goto L' + str(etiquetaFalsa) + ';} // Condicion verdadera' + self.newLine
+                    self.code += '\tif T' + str(temporalValor) + ' == 0 {goto L' + str(etiquetaFalsa) + ';} // Condicion verdadera' + self.newLine
                     self.contadorLineas += 1
                     self.optimizationTable.insertar('', '', self.contadorLineas, 'Creacion de codigo', 'Mirilla - Regla 3')
                     self.generateCode(root.getHijo(2), actual)
@@ -550,7 +498,7 @@ class secondRead():
             if(tipoExpresion == EnumType.boleano):
                 etiquetaFalsa = self.maxTag
                 self.maxTag += 1
-                self.code += '\tif (T' + str(temporalValor) + ' == 0) {goto L' + str(etiquetaFalsa) + ';} // Condicion Falsa' + self.newLine
+                self.code += '\tif T' + str(temporalValor) + ' == 0 {goto L' + str(etiquetaFalsa) + ';} // Condicion Falsa' + self.newLine
                 self.contadorLineas += 1
                 self.optimizationTable.insertar('', '', self.contadorLineas, 'Creacion de codigo', 'Mirilla - Regla 3')
                 self.generateCode(root.getHijo(2), actual)
@@ -595,7 +543,7 @@ class secondRead():
                     self.contadorLineas += 1
                     hpActual = self.actualTemp
                     self.actualTemp += 1
-                    self.code += '\tif (T' + str(temporalValor) + ' >= 0) {goto L' + str(self.maxTag) + ';} // Number is positive' + self.newLine
+                    self.code += '\tif(T' + str(temporalValor) + ' >= 0) {goto L' + str(self.maxTag) + ';} // Number is positive' + self.newLine
                     self.contadorLineas += 1
                     self.optimizationTable.insertar('', '', self.contadorLineas, 'Creacion de codigo', 'Mirilla - Regla 3')
                     self.code += '\tHEAP[int(HP)] = 45; //Add negative symbol to string' + self.newLine
@@ -809,7 +757,7 @@ class secondRead():
             self.maxTag += 1
             etiquetaSalida = self.maxTag
             self.maxTag += 1
-            self.code += '\tif (T' + str(operador1) + ' == T' + str(operador2) + ') {' + 'goto L' + str(etiquetaVerdadera) + ';} //goto true tag' + self.newLine
+            self.code += '\tif(T' + str(operador1) + ' == T' + str(operador2) + ') {' + 'goto L' + str(etiquetaVerdadera) + ';} //goto true tag' + self.newLine
             self.contadorLineas += 1
             self.optimizationTable.insertar('', '', self.contadorLineas, 'Creacion de codigo', 'Mirilla - Regla 3')
             self.code += '\tT' + str(self.actualTemp) + ' = 0;' + self.newLine
@@ -836,7 +784,7 @@ class secondRead():
             self.maxTag += 1
             etiquetaSalida = self.maxTag
             self.maxTag += 1
-            self.code += '\tif (T' + str(operador1) + ' != T' + str(operador2) + ') {' + 'goto L' + str(etiquetaVerdadera) + ';} //goto true tag' + self.newLine
+            self.code += '\tif(T' + str(operador1) + ' != T' + str(operador2) + ') {' + 'goto L' + str(etiquetaVerdadera) + ';} //goto true tag' + self.newLine
             self.contadorLineas += 1
             self.optimizationTable.insertar('', '', self.contadorLineas, 'Creacion de codigo', 'Mirilla - Regla 3')
             self.code += '\tT' + str(self.actualTemp) + ' = 0;' + self.newLine
@@ -863,7 +811,7 @@ class secondRead():
             self.maxTag += 1
             etiquetaSalida = self.maxTag
             self.maxTag += 1
-            self.code += '\tif (T' + str(operador1) + ' > T' + str(operador2) + ') {' + 'goto L' + str(etiquetaVerdadera) + ';} //goto true tag' + self.newLine
+            self.code += '\tif(T' + str(operador1) + ' > T' + str(operador2) + ') {' + 'goto L' + str(etiquetaVerdadera) + ';} //goto true tag' + self.newLine
             self.contadorLineas += 1
             self.optimizationTable.insertar('', '', self.contadorLineas, 'Creacion de codigo', 'Mirilla - Regla 3')
             self.code += '\tT' + str(self.actualTemp) + ' = 0;' + self.newLine
@@ -890,7 +838,7 @@ class secondRead():
             self.maxTag += 1
             etiquetaSalida = self.maxTag
             self.maxTag += 1
-            self.code += '\tif (T' + str(operador1) + ' < T' + str(operador2) + ') {' + 'goto L' + str(etiquetaVerdadera) + ';} //goto true tag' + self.newLine
+            self.code += '\tif(T' + str(operador1) + ' < T' + str(operador2) + ') {' + 'goto L' + str(etiquetaVerdadera) + ';} //goto true tag' + self.newLine
             self.contadorLineas += 1
             self.optimizationTable.insertar('', '', self.contadorLineas, 'Creacion de codigo', 'Mirilla - Regla 3')
             self.code += '\tT' + str(self.actualTemp) + ' = 0;' + self.newLine
@@ -917,7 +865,7 @@ class secondRead():
             self.maxTag += 1
             etiquetaSalida = self.maxTag
             self.maxTag += 1
-            self.code += '\tif (T' + str(operador1) + ' >= T' + str(operador2) + ') {' + 'goto L' + str(etiquetaVerdadera) + ';} //goto true tag' + self.newLine
+            self.code += '\tif(T' + str(operador1) + ' >= T' + str(operador2) + ') {' + 'goto L' + str(etiquetaVerdadera) + ';} //goto true tag' + self.newLine
             self.contadorLineas += 1
             self.optimizationTable.insertar('', '', self.contadorLineas, 'Creacion de codigo', 'Mirilla - Regla 3')
             self.code += '\tT' + str(self.actualTemp) + ' = 0;' + self.newLine
@@ -944,7 +892,7 @@ class secondRead():
             self.maxTag += 1
             etiquetaSalida = self.maxTag
             self.maxTag += 1
-            self.code += '\tif (T' + str(operador1) + ' <= T' + str(operador2) + ') {' + 'goto L' + str(etiquetaVerdadera) + ';} //goto true tag' + self.newLine
+            self.code += '\tif(T' + str(operador1) + ' <= T' + str(operador2) + ') {' + 'goto L' + str(etiquetaVerdadera) + ';} //goto true tag' + self.newLine
             self.contadorLineas += 1
             self.optimizationTable.insertar('', '', self.contadorLineas, 'Creacion de codigo', 'Mirilla - Regla 3')
             self.code += '\tT' + str(self.actualTemp) + ' = 0;' + self.newLine
@@ -971,10 +919,10 @@ class secondRead():
             self.maxTag += 1
             etiquetaSalida = self.maxTag
             self.maxTag += 1
-            self.code += '\tif (T' + str(operador1) + ' == 1) {' + 'goto L' + str(etiquetaVerdadera) + ';} //goto true tag' + self.newLine
+            self.code += '\tif(T' + str(operador1) + ' == 1) {' + 'goto L' + str(etiquetaVerdadera) + ';} //goto true tag' + self.newLine
             self.contadorLineas += 1
             self.optimizationTable.insertar('', '', self.contadorLineas, 'Creacion de codigo', 'Mirilla - Regla 3')
-            self.code += '\tif (T' + str(operador2) + ' == 1) {' + 'goto L' + str(etiquetaVerdadera) + ';} //goto true tag' + self.newLine
+            self.code += '\tif(T' + str(operador2) + ' == 1) {' + 'goto L' + str(etiquetaVerdadera) + ';} //goto true tag' + self.newLine
             self.contadorLineas += 1
             self.optimizationTable.insertar('', '', self.contadorLineas, 'Creacion de codigo', 'Mirilla - Regla 3')
             self.code += '\tT' + str(self.actualTemp) + ' = 0;' + self.newLine
@@ -1012,7 +960,7 @@ class secondRead():
             self.contadorLineas += 1
             etiquetaVerdadera = self.maxTag
             self.maxTag += 1
-            self.code += '\t\tif (T' + str(operador2) + ' == 1) {' + 'goto L' + str(etiquetaVerdadera) + ';} //goto true tag' + self.newLine
+            self.code += '\t\tif(T' + str(operador2) + ' == 1) {' + 'goto L' + str(etiquetaVerdadera) + ';} //goto true tag' + self.newLine
             self.contadorLineas += 1
             self.optimizationTable.insertar('', '', self.contadorLineas, 'Creacion de codigo', 'Mirilla - Regla 3')
             self.code += '\tT' + str(self.actualTemp) + ' = 0;' + self.newLine
@@ -1038,7 +986,7 @@ class secondRead():
             self.maxTag += 1
             etiquetaSalida = self.maxTag
             self.maxTag += 1
-            self.code += '\tif (T' + str(operador1) + ' == 1) {' + 'goto L' + str(etiquetaVerdadera) + ';} //goto true tag' + self.newLine
+            self.code += '\tif(T' + str(operador1) + ' == 1) {' + 'goto L' + str(etiquetaVerdadera) + ';} //goto true tag' + self.newLine
             self.contadorLineas += 1
             self.optimizationTable.insertar('', '', self.contadorLineas, 'Creacion de codigo', 'Mirilla - Regla 3')
             self.code += '\tT' + str(self.actualTemp) + ' = 1;' + self.newLine
@@ -1296,7 +1244,7 @@ class secondRead():
                 self.contadorLineas += 1
                 hpActual = self.actualTemp
                 self.actualTemp += 1
-                self.code += '\tif (T' + str(temporalValor) + ' >= 0) {goto L' + str(self.maxTag) + ';} // Number is positive' + self.newLine
+                self.code += '\tif(T' + str(temporalValor) + ' >= 0) {goto L' + str(self.maxTag) + ';} // Number is positive' + self.newLine
                 self.contadorLineas += 1
                 self.optimizationTable.insertar('', '', self.contadorLineas, 'Creacion de codigo', 'Mirilla - Regla 3')
                 self.code += '\tHEAP[int(HP)] = 45; //Add negative symbol to string' + self.newLine

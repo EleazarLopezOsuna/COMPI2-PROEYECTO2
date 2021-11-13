@@ -242,33 +242,19 @@ conParametros("Hola", "funcion", "parametros");
 
 
 
-    function fibonacci(numero::Int64)::Int64
-        if (numero > 1)
-            return fibonacci(numero - 1) + fibonacci(numero - 2);
-        elseif (numero == 1)
-            return 1;
-        elseif (numero == 0)
-            return 0;
-        end;
-    end;
-    # Deberia de imprimir: 34        
-    fibonacci(10);
-
-function imprimir(numero::Int64)::Int64
-    print(numero);
-    if (numero > 0)
-        imprimir(numero - 1);
-    end;
-end;
-imprimir(5);
-
-
-function factorial(num::Int64)::Int64
-    if num == 1
+function fibonacci(numero::Int64)::Int64
+    if (numero > 1)
+        return fibonacci(numero - 1) + fibonacci(numero - 2);
+    elseif (numero == 1)
         return 1;
-    else
-        return num * factorial(num - 1);
+    elseif (numero == 0)
+        return 0;
     end;
 end;
-
-println(factorial(6));
+function verFibonacci(numero::Int64)
+    for i in 0:(numero - 1)
+        print(fibonacci(i), " ");
+    end;
+end;
+# Deberia de imprimir: 0 1 1 2 3 5 8 13 21 34        
+verFibonacci(10);
