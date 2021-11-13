@@ -32,8 +32,6 @@ class secondRead():
         self.firstRead(root, self.environment)
         self.code += 'func main(){' + self.newLine
         self.contadorLineas += 1
-        self.code += '\tSP = 18;' + self.newLine
-        self.contadorLineas += 1
         self.inFunction = 0
         nuevoEntorno = Environment(self.environment, 'main')
         self.environmentList.append(nuevoEntorno)
@@ -91,20 +89,6 @@ class secondRead():
             # Sin parametros
             nombreFuncion = root.getHijo(0).valor
             resultado = actual.buscar(nombreFuncion)
-            size = 0
-
-            # Guardando los temporales
-            if(self.inFunction == 1):
-                for entorno in self.environmentList:
-                    if(entorno.nombre == nombreFuncion):
-                        self.code += '// Empieza almacenamiento de parametros' + self.newLine
-                        size = len(entorno.tabla)
-                        for i in range(self.primerTemporalFuncion, self.actualTemp):
-                            self.code += '\tSTACK[int(SP)] = T' + str(i) + '; //Almacenamos el temporal ' + str(i) + self.newLine
-                            self.contadorLineas += 1
-                            self.code += '\tSP = SP + 1; //Update SP' + self.newLine
-                            self.contadorLineas += 1
-                            size += 1
             self.code += '\tT' + str(self.actualTemp) + ' = SP; //Save actual environment' + self.newLine
             self.contadorLineas += 1
             valorTemporal = self.actualTemp
@@ -120,47 +104,21 @@ class secondRead():
             retorno = self.actualTemp
             self.contadorLineas += 1
             self.actualTemp += 1
-            #self.code += '\tSP = T' + str(valorTemporal) + '; //Get previous environment back' + self.newLine
-            #self.contadorLineas += 1
-
-            # Recuperando los temporales
-            if(self.inFunction == 1):
-                for entorno in self.environmentList:
-                    if(entorno.nombre == nombreFuncion):
-                        self.code += '// Empieza almacenamiento de parametros' + self.newLine
-                        size = len(entorno.tabla)
-                        for i in range(self.primerTemporalFuncion, self.actualTemp):
-                            self.code += '\tSTACK[int(SP)] = T' + str(i) + '; //Almacenamos el temporal ' + str(i) + self.newLine
-                            self.contadorLineas += 1
-                            self.code += '\tSP = SP + 1; //Update SP' + self.newLine
-                            self.contadorLineas += 1
-                            size += 1
+            self.code += '\tSP = T' + str(valorTemporal) + '; //Get previous environment back' + self.newLine
+            self.contadorLineas += 1
             self.tipoDato = resultado.functionType
             return retorno
         elif(len(root.hijos) == 5):
             # Con parametros
             nombreFuncion = root.getHijo(0).valor
             resultado = actual.buscar(nombreFuncion)
-            size = 0
-            # Guardando los temporales
-            if(self.inFunction == 1):
-                self.ultimoTemporalFuncion = self.actualTemp
-                self.code += '// Empieza almacenamiento de parametros' + self.newLine
-                for i in range(self.primerTemporalFuncion, self.ultimoTemporalFuncion):
-                    self.code += '\tSTACK[int(SP)] = T' + str(i) + '; //Almacenamos el temporal ' + str(i) + self.newLine
-                    self.contadorLineas += 1
-                    if i < (self.ultimoTemporalFuncion - 1):
-                        self.code += '\tSP = SP + 1; //Update SP' + self.newLine
-                        self.contadorLineas += 1
-                    size += 1
-                self.code += '\tT' + str(self.actualTemp) + ' = SP; //Save environment' + self.newLine
-                self.entornoNuevo = self.actualTemp
-                self.actualTemp += 1
-                self.contadorLineas += 1
-                self.code += '\tSP = SP - ' + str(size - 1) + '; //Reset environment' + self.newLine
-                self.contadorLineas += 1
-                self.code += '// Termina almacenamiento de parametros' + self.newLine
-                self.contadorLineas += 1
+            self.code += '\tT' + str(self.actualTemp) + ' = SP; //Save actual environment' + self.newLine
+            self.contadorLineas += 1
+            valorTemporal = self.actualTemp
+            self.actualTemp += 1
+            self.code += '\tSP = ' + str(resultado.relative) + '; //Set new environment' + self.newLine
+            self.contadorLineas += 1
+            # Inicio paso de variables
             contador = 1
             if(resultado.functionType == None):
                 contador = 0
@@ -169,7 +127,7 @@ class secondRead():
                     operador1 = self.resolverExpresion(hijo, actual)
                     tipoOperador1 = self.tipoDato
                     if(tipoOperador1 in (EnumType.entero, EnumType.flotante, EnumType.boleano)):
-                        self.code += '\tT' + str(self.actualTemp) + ' = T' + str(self.entornoNuevo) + ' + ' + str(contador) + '; // Set position for variable' + self.newLine
+                        self.code += '\tT' + str(self.actualTemp) + ' = SP + ' + str(contador) + '; // Set position for variable' + self.newLine
                         self.actualTemp += 1
                         self.contadorLineas += 1
                         self.code += '\tSTACK[int(T' + str(self.actualTemp - 1) + ')] = T' + str(operador1) + '; // Set parameter value' + self.newLine
@@ -219,8 +177,6 @@ class secondRead():
                         self.contadorLineas += 1
                         contador += 1
             # Finaliza paso de variables
-            self.code += '\tSP = T' + str(self.entornoNuevo) + '; //New environment' + self.newLine
-            self.contadorLineas += 1
             self.code += '\t' + nombreFuncion + '(); //Call function ' + nombreFuncion + self.newLine
             self.contadorLineas += 1
             self.code += '\tT' + str(self.actualTemp) + ' = SP + 0; //Get return position' + self.newLine
@@ -230,20 +186,13 @@ class secondRead():
             retorno = self.actualTemp
             self.contadorLineas += 1
             self.actualTemp += 1
-            # Recuperando los temporales
-            if(self.inFunction == 1):
-                self.code += '// Empieza recuperacion de parametros' + self.newLine
-                for i in range(self.primerTemporalFuncion, self.ultimoTemporalFuncion):
-                    self.code += '\tT' + str(i) + ' = STACK[int(SP)]; //Almacenamos el temporal ' + str(i) + self.newLine
-                    self.contadorLineas += 1
-                    self.code += '\tT' + str(i) + ' = STACK[int(T' + str(i) +')]; //Almacenamos el temporal ' + str(i) + self.newLine
-                    self.contadorLineas += 1
-                    if i < (self.ultimoTemporalFuncion - 1):
-                        self.code += '\tSP = SP - 1; //Update SP' + self.newLine
-                        self.contadorLineas += 1
-                self.code += '// Termina recuperacion de parametros' + self.newLine
+            self.code += '\tSP = T' + str(valorTemporal) + '; //Get previous environment back' + self.newLine
+            self.contadorLineas += 1
             self.tipoDato = resultado.functionType
             return retorno
+
+    def guardarVariablesEnStrack(self, actual):
+        print('')
 
     def ejecutarDeclararFuncion(self, root, actual):
         nombreFuncion = root.getHijo(1).valor
@@ -251,24 +200,18 @@ class secondRead():
             # Funcion sin parametros y sin retorno
             temporalRelative = self.relative
             self.relative = 0
-            nuevoEntorno = self.generarParametros(root.getHijo(3), nombreFuncion, None, root.getHijo(1).linea, root.getHijo(1).columna, actual)
+            nuevoEntorno = self.generarParametros(root.getHijo(3), nombreFuncion, None, root.getHijo(1).linea, root.getHijo(1).columna)
             self.environmentList.append(nuevoEntorno)
             self.code += 'func ' + nombreFuncion + '(){' + self.newLine
             self.contadorLineas += 1
             self.salidaFuncion = self.maxTag
             self.maxTag += 1
-            actual.insertar(nombreFuncion, Symbol(
-                            EnumType.funcion, 'Funcion', None, '', '', self.absolute, self.relative, len(nuevoEntorno.tabla),'', root.getHijo(1).linea, root.getHijo(1).columna, actual.nombre, self.obtenerTipo(root.getHijo(4).getHijo(0).nombre)
-                            ))
-            self.primerTemporalFuncion = self.actualTemp
             self.generateCode(root.getHijo(4), nuevoEntorno)
             self.relative = temporalRelative
-            actual.modificar(nombreFuncion, Symbol(
+            actual.insertar(nombreFuncion, Symbol(
                             EnumType.funcion, 'Funcion', None, '', '', self.absolute, self.relative, len(nuevoEntorno.tabla),'', root.getHijo(1).linea, root.getHijo(1).columna, actual.nombre, None
                             ))
             self.relative += len(nuevoEntorno.tabla)
-            self.code += '\tSP = SP + ' + str(len(nuevoEntorno.tabla)) + '; //Increase SP' + self.newLine
-            self.contadorLineas += len(nuevoEntorno.tabla)
             self.code += '\tgoto L' + str(self.salidaFuncion) + '; //Goto end of function' + self.newLine
             self.contadorLineas += 1
             self.code += '\tL' + str(self.salidaFuncion) + ': //End of function' + self.newLine
@@ -282,25 +225,19 @@ class secondRead():
                 tipoFuncion = self.obtenerTipo(root.getHijo(4).getHijo(0).nombre)
                 temporalRelative = self.relative
                 self.relative = 0
-                nuevoEntorno = self.generarParametros(root.getHijo(3), nombreFuncion, tipoFuncion, root.getHijo(1).linea, root.getHijo(1).columna, actual)
+                nuevoEntorno = self.generarParametros(root.getHijo(3), nombreFuncion, tipoFuncion, root.getHijo(1).linea, root.getHijo(1).columna)
                 self.environmentList.append(nuevoEntorno)
                 self.code += 'func ' + nombreFuncion + '(){' + self.newLine
                 self.contadorLineas += 1
                 self.relative = len(nuevoEntorno.tabla)
                 self.salidaFuncion = self.maxTag
                 self.maxTag += 1
+                self.generateCode(root.getHijo(5), nuevoEntorno)
+                self.relative = temporalRelative
                 actual.insertar(nombreFuncion, Symbol(
                             EnumType.funcion, 'Funcion', None, '', '', self.absolute, self.relative, len(nuevoEntorno.tabla),'', root.getHijo(1).linea, root.getHijo(1).columna, actual.nombre, self.obtenerTipo(root.getHijo(4).getHijo(0).nombre)
                             ))
-                self.primerTemporalFuncion = self.actualTemp
-                self.generateCode(root.getHijo(5), nuevoEntorno)
-                self.relative = temporalRelative
-                actual.modificar(nombreFuncion, Symbol(
-                            EnumType.funcion, 'Funcion', None, '', '', self.absolute, self.relative, len(nuevoEntorno.tabla),'', root.getHijo(1).linea, root.getHijo(1).columna, actual.nombre, self.obtenerTipo(root.getHijo(4).getHijo(0).nombre)
-                            ))
                 self.relative += len(nuevoEntorno.tabla)
-                self.code += '\tSP = SP + ' + str(len(nuevoEntorno.tabla)) + '; //Increase SP' + self.newLine
-                self.contadorLineas += len(nuevoEntorno.tabla)
                 self.code += '\tgoto L' + str(self.salidaFuncion) + '; //Goto end of function' + self.newLine
                 self.contadorLineas += 1
                 self.code += '\tL' + str(self.salidaFuncion) + ': //End of function' + self.newLine
@@ -312,25 +249,18 @@ class secondRead():
                 # Funcion con parametros pero sin retorno
                 temporalRelative = self.relative
                 self.relative = 0
-                nuevoEntorno = self.generarParametros(root.getHijo(3), nombreFuncion, None, root.getHijo(1).linea, root.getHijo(1).columna, actual)
+                nuevoEntorno = self.generarParametros(root.getHijo(3), nombreFuncion, None, root.getHijo(1).linea, root.getHijo(1).columna)
                 self.environmentList.append(nuevoEntorno)
+                self.relative = temporalRelative
                 self.code += 'func ' + nombreFuncion + '(){' + self.newLine
                 self.contadorLineas += 1
-                self.relative = len(nuevoEntorno.tabla)
                 self.salidaFuncion = self.maxTag
                 self.maxTag += 1
+                self.generateCode(root.getHijo(5), nuevoEntorno)
                 actual.insertar(nombreFuncion, Symbol(
                             EnumType.funcion, 'Funcion', None, '', '', self.absolute, self.relative, len(nuevoEntorno.tabla),'', root.getHijo(1).linea, root.getHijo(1).columna, actual.nombre, None
                             ))
-                self.primerTemporalFuncion = self.actualTemp
-                self.generateCode(root.getHijo(5), nuevoEntorno)
-                self.relative = temporalRelative
-                actual.modificar(nombreFuncion, Symbol(
-                            EnumType.funcion, 'Funcion', None, '', '', self.absolute, self.relative, len(nuevoEntorno.tabla),'', root.getHijo(1).linea, root.getHijo(1).columna, actual.nombre, None
-                            ))
                 self.relative += len(nuevoEntorno.tabla)
-                self.code += '\tSP = SP + ' + str(len(nuevoEntorno.tabla)) + '; //Increase SP' + self.newLine
-                self.contadorLineas += len(nuevoEntorno.tabla)
                 self.code += '\tgoto L' + str(self.salidaFuncion) + '; //Goto end of function' + self.newLine
                 self.contadorLineas += 1
                 self.code += '\tL' + str(self.salidaFuncion) + ': //End of function' + self.newLine
@@ -343,25 +273,18 @@ class secondRead():
             tipoFuncion = self.obtenerTipo(root.getHijo(5).getHijo(0).nombre)
             temporalRelative = self.relative
             self.relative = 0
-            nuevoEntorno = self.generarParametros(root.getHijo(3), nombreFuncion, tipoFuncion, root.getHijo(1).linea, root.getHijo(1).columna, actual)
+            nuevoEntorno = self.generarParametros(root.getHijo(3), nombreFuncion, tipoFuncion, root.getHijo(1).linea, root.getHijo(1).columna)
             self.environmentList.append(nuevoEntorno)
+            self.relative = temporalRelative
             self.code += 'func ' + nombreFuncion + '(){' + self.newLine
             self.contadorLineas += 1
-            self.relative = len(nuevoEntorno.tabla)
             self.salidaFuncion = self.maxTag
             self.maxTag += 1
+            self.generateCode(root.getHijo(6), nuevoEntorno)
             actual.insertar(nombreFuncion, Symbol(
                 EnumType.funcion, 'Funcion', None, '', '', self.absolute, self.relative, len(nuevoEntorno.tabla),'', root.getHijo(1).linea, root.getHijo(1).columna, actual.nombre, tipoFuncion
                 ))
-            self.primerTemporalFuncion = self.actualTemp
-            self.generateCode(root.getHijo(6), nuevoEntorno)
-            self.relative = temporalRelative
-            actual.modificar(nombreFuncion, Symbol(
-                EnumType.funcion, 'Funcion', None, '', '', self.absolute, self.relative, len(nuevoEntorno.tabla),'', root.getHijo(1).linea, root.getHijo(1).columna, actual.nombre, tipoFuncion
-                ))
             self.relative += 1
-            self.code += '\tSP = SP + 1; //Increase SP' + self.newLine
-            self.contadorLineas += 1
             self.code += '\tgoto L' + str(self.salidaFuncion) + '; //Goto end of function' + self.newLine
             self.contadorLineas += 1
             self.code += '\tL' + str(self.salidaFuncion) + ': //End of function' + self.newLine
@@ -370,9 +293,9 @@ class secondRead():
             self.code += '}' + self.newLine
             self.contadorLineas += 1
 
-    def generarParametros(self, root, nombreFuncion, tipoRetorno, linea, columna, actual):
+    def generarParametros(self, root, nombreFuncion, tipoRetorno, linea, columna):
         contador = 0
-        environment = Environment(actual, nombreFuncion)
+        environment = Environment(self.environment, nombreFuncion)
         if(tipoRetorno != None):
             environment.insertar('Retorno', Symbol(
                 tipoRetorno, 'Retorno', None, '', '', '', contador, 1,'', linea, columna, environment.nombre, None
@@ -411,10 +334,8 @@ class secondRead():
             nombreVariable = root.getHijo(1).valor
             resultado = actual.buscar(nombreVariable)
             if(resultado == None):
-                actual.insertar(nombreVariable, Symbol(EnumType.entero, 'Variable', None, '', '', '', self.relative, 1,'', root.getHijo(1).linea, root.getHijo(1).columna, actual.nombre, None))
+                actual.insertar(nombreVariable, Symbol(EnumType.entero, 'Variable', None, '', '', self.absolute, self.relative, 1,'', root.getHijo(1).linea, root.getHijo(1).columna, actual.nombre, None))
                 self.relative += 1
-                #self.code += '\tSP = SP + 1; //Increase SP' + self.newLine
-                #self.contadorLineas += 1
             posicionVariable = (self.relative - 1)
             inicio = self.resolverExpresion(root.getHijo(3).getHijo(0), actual)
             tipoInicio = self.tipoDato
@@ -430,7 +351,7 @@ class secondRead():
                 self.maxTag += 1
                 self.breakTag = salidaCiclo = self.maxTag
                 self.maxTag += 1
-                self.code += '\tSTACK[int(SP) + ' + str(posicionVariable) + '] = T' + str(temporalValor) + '; //Set variable initial value' + self.newLine
+                self.code += '\tSTACK[' + str(posicionVariable) + '] = T' + str(temporalValor) + '; //Set variable initial value' + self.newLine
                 self.contadorLineas += 1
                 self.code += '\t\tif T' + str(temporalValor) + ' == T' + str(final) + ' {goto L' + str(salidaCiclo) + ';}' + self.newLine
                 self.contadorLineas += 1
@@ -450,10 +371,8 @@ class secondRead():
             nombreVariable = root.getHijo(1).valor
             resultado = actual.buscar(nombreVariable)
             if(resultado == None):
-                actual.insertar(nombreVariable, Symbol(EnumType.caracter, 'Variable', None, '', '', '', self.relative, 1, '', root.getHijo(1).linea, root.getHijo(1).columna, actual.nombre, None))
+                actual.insertar(nombreVariable, Symbol(EnumType.caracter, 'Variable', None, '', '', self.absolute, self.relative, 1,'', root.getHijo(1).linea, root.getHijo(1).columna, actual.nombre, None))
                 self.relative += 1
-                #self.code += '\tSP = SP + 1; //Increase SP' + self.newLine
-                #self.contadorLineas += 1
             posicionVariable = (self.relative - 1)
             temporalValor = self.resolverExpresion(root.getHijo(3), actual)
             self.code += '\tT' + str(self.actualTemp) + ' = SP + ' + str(posicionVariable) + '; //Set variable position' + self.newLine
@@ -541,6 +460,7 @@ class secondRead():
 
     def ejecutarElseIf(self, root, actual):
         if(root.valor == 'ELSEIF'):
+            print(root.nombre)
             temporalValor = self.resolverExpresion(root.getHijo(1), actual)
             tipoExpresion = self.tipoDato
             if(tipoExpresion == EnumType.boleano):
@@ -646,8 +566,6 @@ class secondRead():
                     self.contadorLineas += 1
                     self.actualTemp += 1
                     self.relative += 1
-                    self.code += '\tSP = SP + 1; //Increase SP' + self.newLine
-                    self.contadorLineas += 1
                 else:
                     # La variable si existe debemos modificarla
                     temporalValor = self.resolverExpresion(root.getHijo(2), actual)
